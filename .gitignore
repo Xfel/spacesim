@@ -1,6 +1,5 @@
-*.class
+bin
+build
 
-# Package Files #
-*.jar
-*.war
-*.ear
+# jme extracts them here
+*.dll
