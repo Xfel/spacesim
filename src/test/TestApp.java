@@ -3,6 +3,7 @@ package test;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.BackingStoreException;
 
 import org.lwjgl.input.Keyboard;
 
@@ -44,10 +45,15 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 		Logger.getLogger("").setLevel(Level.WARNING);
 
 		TestApp app = new TestApp();
-//		app.setShowSettings(false);
+		app.setShowSettings(false);
 		AppSettings settings = new AppSettings(true);
 
 		settings.setTitle("SpaceGame");
+		try {
+			settings.load("SpaceGame");
+		} catch (BackingStoreException e) {
+			Logger.getGlobal().log(Level.WARNING, "Unable to load settings", e);
+		}
 //		settings.setHeight(value)
 
 		app.setSettings(settings);
@@ -87,6 +93,10 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 
 		physicsState.getPhysicsSpace().add(physics = sp.getPhysics());
 		physicsState.getPhysicsSpace().addTickListener(sp);
+		
+		createAsteroid(new Vector3f(20, 0, 0));
+		createAsteroid(new Vector3f(10, 40, 0));
+		createAsteroid(new Vector3f(0, 0, 30));
 
 		inputManager.addListener(this, "reset", "drive", "rotateUp", "rotateDown", "rotateLeft", "rotateRight");
 		inputManager.addMapping("drive", new KeyTrigger(Keyboard.KEY_SPACE));
@@ -126,6 +136,22 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 		createHUD();
 	}
 
+	private void createAsteroid(Vector3f vector3f) {
+		Spatial aster= assetManager.loadModel("Models/Asteroids/rock_textured.blend");
+		
+		
+		
+		SimpleSpaceObject astObj=new SimpleSpaceObject(((Node)aster).getChild(2), 40);
+		
+		rootNode.attachChild(astObj.getNode());
+		astObj.getPhysics().setPhysicsLocation(vector3f);
+
+		physicsState.getPhysicsSpace().add(astObj.getPhysics());
+		physicsState.getPhysicsSpace().addTickListener(astObj);
+		
+		astObj.getPhysics().setAngularVelocity(new Vector3f(FastMath.nextRandomFloat()*0.5f, FastMath.nextRandomFloat()*0.5f, FastMath.nextRandomFloat()*0.5f));
+	}
+
 	private void createHUD() {
 		linVeloText = new BitmapText(guiFont);
 		linVeloText.setLocalTranslation(0, settings.getHeight(), 0);
@@ -142,17 +168,19 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 	public void simpleUpdate(float tpf) {
 		super.simpleUpdate(tpf);
 
-		linVeloText.setText("Linear Velocity: " + sp.getLinearVelocity());
+		Vector3f linearVelocity = sp.getLinearVelocity();
+		linVeloText.setText(String.format("Linear Velocity: (%.2f, %.2f, %.2f)", linearVelocity.x, linearVelocity.y,
+				linearVelocity.z));
 		float[] angles = sp.getAngularVelocity().toAngles(null);
-		StringBuilder sb=new StringBuilder("(");
-		for (int i = 0; i < angles.length; i++) {
-			sb.append(angles[i]*FastMath.RAD_TO_DEG);
-			sb.append(", ");
-		}
-		sb.delete(sb.length()-2, sb.length());
-		sb.append(')');
-		
-		angVeloText.setText("Angular Velocity: " + sb.toString());
+//		StringBuilder sb = new StringBuilder("(");
+//		for (int i = 0; i < angles.length; i++) {
+//			sb.append(angles[i] * FastMath.RAD_TO_DEG);
+//			sb.append(", ");
+//		}
+//		sb.delete(sb.length() - 2, sb.length());
+//		sb.append(')');
+
+		angVeloText.setText(String.format("Angular Velocity: (%.2f, %.2f, %.2f)", angles[0], angles[1], angles[2]));
 	}
 
 	@Override
@@ -314,10 +342,10 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 //			quat.toAngles(temp);
 //
 //			physics.setAngularVelocity(physics.getAngularVelocity().addLocal(temp[0], temp[1], temp[2]));
-		} else if(name.equals("reset")){
+		} else if (name.equals("reset")) {
 			sp.getPhysics().setAngularVelocity(Vector3f.ZERO);
 			sp.getPhysics().setLinearVelocity(Vector3f.ZERO);
-			
+
 			sp.getPhysics().setPhysicsLocation(Vector3f.ZERO);
 			sp.getPhysics().setPhysicsRotation(Quaternion.IDENTITY);
 		}

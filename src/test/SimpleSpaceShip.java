@@ -180,21 +180,21 @@ public class SimpleSpaceShip extends SimpleSpaceObject implements ISpaceShip {
 		
 		// the control engines
 		//front right
-		/* 2 */engines.add(new Engine(assets, new Vector3f(2.4243f, -0.326057f, -0.611425f), new Vector3f(0, 0, -1), 0, 2f));
+		/* 2 */engines.add(new Engine(assets, new Vector3f(2.4243f, -0.326057f, 0.611425f), new Vector3f(0, 0, -1), 0, 2f));
 		//front left
-		/* 3 */engines.add(new Engine(assets, new Vector3f(2.4243f, -0.326057f, 0.611425f), new Vector3f(0, 0, 1), 0, 2f));
+		/* 3 */engines.add(new Engine(assets, new Vector3f(2.4243f, -0.326057f, -0.611425f), new Vector3f(0, 0, 1), 0, 2f));
 		//front top
-		/* 4 */engines.add(new Engine(assets, new Vector3f(2.4598f, 0.094766f, 0f), new Vector3f(0, 1, 0), 0, 2f));
+		/* 4 */engines.add(new Engine(assets, new Vector3f(2.4598f, -0.094766f, 0f), new Vector3f(0, 1, 0), 0, 2f));
 		//front bottom
-		/* 5 */engines.add(new Engine(assets, new Vector3f(2.4747f, -0.821086f, 0f), new Vector3f(0, -1, 0), 0, 2f));
+		/* 5 */engines.add(new Engine(assets, new Vector3f(2.4747f, 0.821086f, 0f), new Vector3f(0, -1, 0), 0, 2f));
 		//back right
-		/* 6 */engines.add(new Engine(assets, new Vector3f(-3.329f, -0.119323f, -0.998017f), new Vector3f(0, 0, -1), 0, 2f));
+		/* 6 */engines.add(new Engine(assets, new Vector3f(-3.329f, -0.326057f, 0.998017f), new Vector3f(0, 0, -1), 0, 2f));
 		//back left
-		/* 7 */engines.add(new Engine(assets, new Vector3f(-3.329f, -0.119323f, 0.998017f), new Vector3f(0, 0, 1), 0, 2f));
+		/* 7 */engines.add(new Engine(assets, new Vector3f(-3.329f, -0.326057f, -0.998017f), new Vector3f(0, 0, 1), 0, 2f));
 		//back top
-		/* 8 */engines.add(new Engine(assets, new Vector3f(-2.4444f, 0.640549f, 0f), new Vector3f(0, 1, 0), 0, 2f));
+		/* 8 */engines.add(new Engine(assets, new Vector3f(-2.4444f, -0.640549f, 0f), new Vector3f(0, 1, 0), 0, 2f));
 		//back bottom
-		/* 9 */engines.add(new Engine(assets, new Vector3f(-2.4569f, -0.732492f, 0f), new Vector3f(0, -1, 0), 0, 2f));
+		/* 9 */engines.add(new Engine(assets, new Vector3f(-2.4569f, 0.732492f, 0f), new Vector3f(0, -1, 0), 0, 2f));
 	}
 
 	@Override

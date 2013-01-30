@@ -27,7 +27,9 @@ public class SimpleSpaceObject implements ISpaceObject, PhysicsTickListener {
 		node.attachChild(model);
 
 		physics = new RigidBodyControl(CollisionShapeFactory.createDynamicMeshShape(model), mass);
-
+//		physics.setDamping(0, 0);
+//		physics.setFriction(0);
+		physics.setAngularSleepingThreshold(0);
 		node.addControl(physics);
 	}
 
