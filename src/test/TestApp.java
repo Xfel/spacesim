@@ -1,5 +1,6 @@
 package test;
 
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,6 +18,7 @@ import com.jme3.effect.Particle;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.effect.ParticleMesh;
 import com.jme3.effect.influencers.DefaultParticleInfluencer;
+import com.jme3.font.BitmapText;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
@@ -31,6 +33,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.SceneGraphVisitor;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer;
+import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.system.AppSettings;
 import com.jme3.util.SkyFactory;
@@ -55,6 +58,8 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 	private RigidBodyControl physics;
 //	private ParticleEmitter fire1, fire2;
 	private SimpleSpaceShip sp;
+	private BitmapText linVeloText;
+	private BitmapText angVeloText;
 
 	@Override
 	public void simpleInitApp() {
@@ -75,20 +80,21 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 		flyCam.setMoveSpeed(10f);
 
 //		createShip();
-		
-		sp=new SimpleSpaceShip(assetManager);
-		
+
+		sp = new SimpleSpaceShip(assetManager);
+
 		rootNode.attachChild(sp.getNode());
-		
-		physicsState.getPhysicsSpace().add(physics=sp.getPhysics());
+
+		physicsState.getPhysicsSpace().add(physics = sp.getPhysics());
 		physicsState.getPhysicsSpace().addTickListener(sp);
 
-		inputManager.addListener(this, "drive", "rotateUp", "rotateDown", "rotateLeft", "rotateRight");
+		inputManager.addListener(this, "reset", "drive", "rotateUp", "rotateDown", "rotateLeft", "rotateRight");
 		inputManager.addMapping("drive", new KeyTrigger(Keyboard.KEY_SPACE));
 		inputManager.addMapping("rotateUp", new KeyTrigger(Keyboard.KEY_UP));
 		inputManager.addMapping("rotateDown", new KeyTrigger(Keyboard.KEY_DOWN));
 		inputManager.addMapping("rotateLeft", new KeyTrigger(Keyboard.KEY_LEFT));
 		inputManager.addMapping("rotateRight", new KeyTrigger(Keyboard.KEY_RIGHT));
+		inputManager.addMapping("reset", new KeyTrigger(Keyboard.KEY_RETURN));
 
 		final ScreenshotAppState state = new ScreenshotAppState();
 		stateManager.attach(state);
@@ -116,6 +122,37 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 //		AmbientLight bgLight=new AmbientLight();
 ////		bgLight.setColor(new ColorRGBA(0.25f, 0.25f, 0.25f, 1f));
 //		rootNode.addLight(bgLight);
+
+		createHUD();
+	}
+
+	private void createHUD() {
+		linVeloText = new BitmapText(guiFont);
+		linVeloText.setLocalTranslation(0, settings.getHeight(), 0);
+		linVeloText.setText("Linear Velocity:");
+		guiNode.attachChild(linVeloText);
+
+		angVeloText = new BitmapText(guiFont);
+		angVeloText.setLocalTranslation(0, settings.getHeight() - linVeloText.getLineHeight(), 0);
+		angVeloText.setText("Angular Velocity:");
+		guiNode.attachChild(angVeloText);
+	}
+
+	@Override
+	public void simpleUpdate(float tpf) {
+		super.simpleUpdate(tpf);
+
+		linVeloText.setText("Linear Velocity: " + sp.getLinearVelocity());
+		float[] angles = sp.getAngularVelocity().toAngles(null);
+		StringBuilder sb=new StringBuilder("(");
+		for (int i = 0; i < angles.length; i++) {
+			sb.append(angles[i]*FastMath.RAD_TO_DEG);
+			sb.append(", ");
+		}
+		sb.delete(sb.length()-2, sb.length());
+		sb.append(')');
+		
+		angVeloText.setText("Angular Velocity: " + sb.toString());
 	}
 
 	@Override
@@ -171,10 +208,10 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 	public void onAction(String name, boolean isPressed, float tpf) {
 		if (name.equals("drive")) {
 //			drive = isPressed;
-			if(isPressed){
+			if (isPressed) {
 				sp.getEngines().get(0).setCurrentForce(1f);
 				sp.getEngines().get(1).setCurrentForce(1f);
-			}else{
+			} else {
 				sp.getEngines().get(0).setCurrentForce(0);
 				sp.getEngines().get(1).setCurrentForce(0);
 			}
@@ -186,10 +223,10 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 //				fire1.setParticlesPerSec(0);
 //			}
 		} else if (name.equals("rotateUp")) {
-			if(isPressed){
+			if (isPressed) {
 				sp.getEngines().get(4).setCurrentForce(1f);
 				sp.getEngines().get(9).setCurrentForce(1f);
-			}else{
+			} else {
 				sp.getEngines().get(4).setCurrentForce(0);
 				sp.getEngines().get(9).setCurrentForce(0);
 			}
@@ -209,10 +246,10 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 //
 //			physics.setAngularVelocity(physics.getAngularVelocity().addLocal(temp[0], temp[1], temp[2]));
 		} else if (name.equals("rotateDown")) {
-			if(isPressed){
+			if (isPressed) {
 				sp.getEngines().get(5).setCurrentForce(1f);
 				sp.getEngines().get(8).setCurrentForce(1f);
-			}else{
+			} else {
 				sp.getEngines().get(5).setCurrentForce(0);
 				sp.getEngines().get(8).setCurrentForce(0);
 			}
@@ -232,10 +269,10 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 //
 //			physics.setAngularVelocity(physics.getAngularVelocity().addLocal(temp[0], temp[1], temp[2]));
 		} else if (name.equals("rotateLeft")) {
-			if(isPressed){
+			if (isPressed) {
 				sp.getEngines().get(2).setCurrentForce(1f);
 				sp.getEngines().get(7).setCurrentForce(1f);
-			}else{
+			} else {
 				sp.getEngines().get(2).setCurrentForce(0);
 				sp.getEngines().get(7).setCurrentForce(0);
 			}
@@ -255,10 +292,10 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 //
 //			physics.setAngularVelocity(physics.getAngularVelocity().addLocal(temp[0], temp[1], temp[2]));
 		} else if (name.equals("rotateRight")) {
-			if(isPressed){
+			if (isPressed) {
 				sp.getEngines().get(3).setCurrentForce(1f);
 				sp.getEngines().get(6).setCurrentForce(1f);
-			}else{
+			} else {
 				sp.getEngines().get(3).setCurrentForce(0);
 				sp.getEngines().get(6).setCurrentForce(0);
 			}
@@ -277,6 +314,12 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 //			quat.toAngles(temp);
 //
 //			physics.setAngularVelocity(physics.getAngularVelocity().addLocal(temp[0], temp[1], temp[2]));
+		} else if(name.equals("reset")){
+			sp.getPhysics().setAngularVelocity(Vector3f.ZERO);
+			sp.getPhysics().setLinearVelocity(Vector3f.ZERO);
+			
+			sp.getPhysics().setPhysicsLocation(Vector3f.ZERO);
+			sp.getPhysics().setPhysicsRotation(Quaternion.IDENTITY);
 		}
 	}
 

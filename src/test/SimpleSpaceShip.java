@@ -17,7 +17,6 @@ import com.jme3.effect.influencers.DefaultParticleInfluencer;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -25,7 +24,7 @@ import com.jme3.scene.Spatial;
 import spacegame.model.IShipEngine;
 import spacegame.model.ISpaceShip;
 
-public class SimpleSpaceShip implements ISpaceShip, PhysicsTickListener {
+public class SimpleSpaceShip extends SimpleSpaceObject implements ISpaceShip {
 
 	private class Engine extends DefaultParticleInfluencer implements IShipEngine {
 
@@ -168,27 +167,11 @@ public class SimpleSpaceShip implements ISpaceShip, PhysicsTickListener {
 
 	}
 
-	private Node node;
-	private RigidBodyControl physics;
-
-	private Quaternion rotation = new Quaternion();
-	private Vector3f location = new Vector3f();
-
-	private Quaternion angularVelocity = new Quaternion();
-	private Vector3f linearVelocity = new Vector3f();
-
 	private List<Engine> engines = new ArrayList<Engine>();
 
 	public SimpleSpaceShip(AssetManager assets) {
-		node = new Node("FirstShip");
-
-		Spatial model = assets.loadModel("Models/Complete/FirstShip/FirstShip_LowPoly.blend");
-		node.attachChild(model);
-
-		physics = new RigidBodyControl(CollisionShapeFactory.createDynamicMeshShape(model), 20f);
-
-		node.addControl(physics);
-
+		super(assets.loadModel("Models/Complete/FirstShip/FirstShip_LowPoly.blend"), 20f);
+		
 		//(AssetManager assets, Vector3f location, Vector3f defaultDirection, float maxModulationAngle,float maxForce
 		
 		// the main engines
@@ -215,47 +198,6 @@ public class SimpleSpaceShip implements ISpaceShip, PhysicsTickListener {
 	}
 
 	@Override
-	public float getMass() {
-		return physics.getMass();
-	}
-
-	@Override
-	public Vector3f getLocation() {
-		return location;
-	}
-
-	@Override
-	public Quaternion getRotation() {
-		return rotation;
-	}
-
-	@Override
-	public Vector3f getLinearVelocity() {
-		return linearVelocity;
-	}
-
-	@Override
-	public Quaternion getAngularVelocity() {
-		return angularVelocity;
-	}
-
-	@Override
-	public void physicsTick(PhysicsSpace space, float f) {
-		physics.getPhysicsLocation(location);
-		physics.getPhysicsRotation(rotation);
-
-		// get angular velocity and convert it to local space
-		// using it as temporary here
-		physics.getAngularVelocity(linearVelocity);
-		angularVelocity.fromAngles(linearVelocity.getX(), linearVelocity.getY(), linearVelocity.getZ());
-		angularVelocity.multLocal(rotation.inverse());
-
-		// get linear velocity and convert it to local space
-		physics.getLinearVelocity(linearVelocity);
-		rotation.inverse().multLocal(linearVelocity);
-	}
-
-	@Override
 	public void prePhysicsTick(PhysicsSpace space, float f) {
 		for (Engine engine : engines) {
 
@@ -269,13 +211,10 @@ public class SimpleSpaceShip implements ISpaceShip, PhysicsTickListener {
 	public List<? extends IShipEngine> getEngines() {
 		return engines;
 	}
-
-	public Node getNode() {
-		return node;
-	}
-
-	public RigidBodyControl getPhysics() {
-		return physics;
+	
+	@Override
+	public IShipEngine getEngine(int id) {
+		return engines.get(id);
 	}
 
 }
