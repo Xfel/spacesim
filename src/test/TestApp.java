@@ -172,8 +172,8 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 		if (name.equals("drive")) {
 //			drive = isPressed;
 			if(isPressed){
-				sp.getEngines().get(0).setCurrentForce(10f);
-				sp.getEngines().get(1).setCurrentForce(10f);
+				sp.getEngines().get(0).setCurrentForce(1f);
+				sp.getEngines().get(1).setCurrentForce(1f);
 			}else{
 				sp.getEngines().get(0).setCurrentForce(0);
 				sp.getEngines().get(1).setCurrentForce(0);
@@ -187,8 +187,8 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 //			}
 		} else if (name.equals("rotateUp")) {
 			if(isPressed){
-				sp.getEngines().get(4).setCurrentForce(2f);
-				sp.getEngines().get(9).setCurrentForce(2f);
+				sp.getEngines().get(4).setCurrentForce(1f);
+				sp.getEngines().get(9).setCurrentForce(1f);
 			}else{
 				sp.getEngines().get(4).setCurrentForce(0);
 				sp.getEngines().get(9).setCurrentForce(0);
@@ -210,8 +210,8 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 //			physics.setAngularVelocity(physics.getAngularVelocity().addLocal(temp[0], temp[1], temp[2]));
 		} else if (name.equals("rotateDown")) {
 			if(isPressed){
-				sp.getEngines().get(5).setCurrentForce(2f);
-				sp.getEngines().get(8).setCurrentForce(2f);
+				sp.getEngines().get(5).setCurrentForce(1f);
+				sp.getEngines().get(8).setCurrentForce(1f);
 			}else{
 				sp.getEngines().get(5).setCurrentForce(0);
 				sp.getEngines().get(8).setCurrentForce(0);
@@ -233,8 +233,8 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 //			physics.setAngularVelocity(physics.getAngularVelocity().addLocal(temp[0], temp[1], temp[2]));
 		} else if (name.equals("rotateLeft")) {
 			if(isPressed){
-				sp.getEngines().get(2).setCurrentForce(2f);
-				sp.getEngines().get(7).setCurrentForce(2f);
+				sp.getEngines().get(2).setCurrentForce(1f);
+				sp.getEngines().get(7).setCurrentForce(1f);
 			}else{
 				sp.getEngines().get(2).setCurrentForce(0);
 				sp.getEngines().get(7).setCurrentForce(0);
@@ -256,8 +256,8 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 //			physics.setAngularVelocity(physics.getAngularVelocity().addLocal(temp[0], temp[1], temp[2]));
 		} else if (name.equals("rotateRight")) {
 			if(isPressed){
-				sp.getEngines().get(3).setCurrentForce(2f);
-				sp.getEngines().get(6).setCurrentForce(2f);
+				sp.getEngines().get(3).setCurrentForce(1f);
+				sp.getEngines().get(6).setCurrentForce(1f);
 			}else{
 				sp.getEngines().get(3).setCurrentForce(0);
 				sp.getEngines().get(6).setCurrentForce(0);

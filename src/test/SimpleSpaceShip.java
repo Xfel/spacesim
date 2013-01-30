@@ -117,7 +117,7 @@ public class SimpleSpaceShip implements ISpaceShip, PhysicsTickListener {
 
 		@Override
 		public void setCurrentForce(float force) {
-			if (currentForce < 0 || currentForce > maxForce) {
+			if (currentForce < 0 || currentForce > 1) {
 				throw new IllegalArgumentException("Force out of supported bounds");
 			}
 
@@ -259,7 +259,7 @@ public class SimpleSpaceShip implements ISpaceShip, PhysicsTickListener {
 	public void prePhysicsTick(PhysicsSpace space, float f) {
 		for (Engine engine : engines) {
 
-			Vector3f force = engine.getActualDirection().mult(engine.getCurrentForce());
+			Vector3f force = engine.getActualDirection().mult(engine.getCurrentForce()*engine.getMaximumForce());
 
 			physics.applyForce(rotation.multLocal(force), rotation.mult(engine.getLocation()));
 		}
