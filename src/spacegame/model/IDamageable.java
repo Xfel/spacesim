@@ -6,7 +6,7 @@ public interface IDamageable {
 	
 	float getMaximumIntegrity();
 	
-	void damage(float damage);
+	void damage(float damage, DamageType type);
 	
 	void repair(float amount);
 	

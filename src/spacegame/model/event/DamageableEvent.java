@@ -1,5 +1,6 @@
 package spacegame.model.event;
 
+import spacegame.model.DamageType;
 import spacegame.model.IDamageable;
 
 public abstract class DamageableEvent extends ModelEvent {
@@ -11,16 +12,23 @@ public abstract class DamageableEvent extends ModelEvent {
 		private static final long serialVersionUID = 404380802116333298L;
 		
 		private float damageAmount;
+		
+		private DamageType damageType;
 
-		public Damaged(IDamageable source, float damageAmount) {
+		public Damaged(IDamageable source, float damageAmount, DamageType damageType) {
 			super(source);
 			this.damageAmount = damageAmount;
+			this.damageType=damageType;
 		}
 
 		public float getDamageAmount() {
 			return damageAmount;
 		}
 
+		public DamageType getDamageType() {
+			return damageType;
+		}
+		
 	}
 	
 	public static final class Repaired extends DamageableEvent {
