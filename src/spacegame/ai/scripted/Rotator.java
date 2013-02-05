@@ -33,13 +33,13 @@ public class Rotator extends Autopilot {
 			
 			float[] dsts=rot.toAngles(null);
 			
-			Stabilizer.setEngineRotation(-Stabilizer.getAccel(0, dsts[1], angles[1]), ship.getEngine(2), ship.getEngine(7), ship.getEngine(3), ship.getEngine(6));
-			Stabilizer.setEngineRotation(-Stabilizer.getAccel(0, dsts[2], angles[2]), ship.getEngine(4), ship.getEngine(9), ship.getEngine(5), ship.getEngine(8));
+			Stabilizer.setEngineRotation(Stabilizer.getAccel(0, dsts[1], angles[1]), ship);
+			Stabilizer.setEngineRotation(Stabilizer.getAccel(0, dsts[2], angles[2]), ship);
 			
 		} else {
 
-			Stabilizer.adjust(angles[1], ship.getEngine(2), ship.getEngine(7), ship.getEngine(3), ship.getEngine(6));
-			Stabilizer.adjust(angles[2], ship.getEngine(4), ship.getEngine(9), ship.getEngine(5), ship.getEngine(8));
+			Stabilizer.adjust(angles[1], ship);
+			Stabilizer.adjust(angles[2], ship);
 		}
 	}
 

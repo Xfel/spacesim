@@ -5,7 +5,9 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 
 import spacegame.ai.Autopilot;
+import spacegame.model.EngineGroup;
 import spacegame.model.IShipEngine;
+import spacegame.model.ISpaceShip;
 
 public class Stabilizer extends Autopilot {
 
@@ -15,82 +17,61 @@ public class Stabilizer extends Autopilot {
 
 		float[] angles = angv.toAngles(null);
 
-		adjust(angles[1], getShip().getEngine(2), getShip().getEngine(7), getShip().getEngine(3), getShip()
-				.getEngine(6));
-		adjust(angles[2], getShip().getEngine(4), getShip().getEngine(9), getShip().getEngine(5), getShip()
-				.getEngine(8));
+		adjust(angles[1], getShip());
+		adjust(angles[2], getShip());
 	}
 
-	public static void adjust(float angle, IShipEngine engineDown1,
-			IShipEngine engineDown2, IShipEngine engineUp1, IShipEngine engineUp2) {
+	public static void adjust(float angle, ISpaceShip ship) {
 		if (angle > FastMath.ZERO_TOLERANCE) {
-			engineUp1.setCurrentForce(1f);
-			engineUp2.setCurrentForce(1f);
-
-			engineDown1.setCurrentForce(0);
-			engineDown2.setCurrentForce(0);
+			ship.getEngineGroup(EngineGroup.ID_ROTATE_UP).setCurrentForce(1f);
+			ship.getEngineGroup(EngineGroup.ID_ROTATE_DOWN).setCurrentForce(0f);
 		} else if (angle < -FastMath.ZERO_TOLERANCE) {
-			engineUp1.setCurrentForce(0);
-			engineUp2.setCurrentForce(0);
-
-			engineDown1.setCurrentForce(1);
-			engineDown2.setCurrentForce(1);
+			ship.getEngineGroup(EngineGroup.ID_ROTATE_UP).setCurrentForce(0f);
+			ship.getEngineGroup(EngineGroup.ID_ROTATE_DOWN).setCurrentForce(1f);
 		} else {
-			engineUp1.setCurrentForce(0);
-			engineUp2.setCurrentForce(0);
-
-			engineDown1.setCurrentForce(0);
-			engineDown2.setCurrentForce(0);
+			ship.getEngineGroup(EngineGroup.ID_ROTATE_UP).setCurrentForce(0f);
+			ship.getEngineGroup(EngineGroup.ID_ROTATE_DOWN).setCurrentForce(0f);
 		}
 	}
 
 	@Override
 	public void queueTask(Vector3f desiredHeading, Vector3f desiredPosition) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
 	public void clearTask() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
-	public static void setEngineRotation(float angularVelo, IShipEngine engineDown1,
-			IShipEngine engineDown2, IShipEngine engineUp1, IShipEngine engineUp2) {
+	public static void setEngineRotation(float angularVelo, ISpaceShip ship) {
 		if (angularVelo > FastMath.ZERO_TOLERANCE) {
-			engineUp1.setCurrentForce(angularVelo);
-			engineUp2.setCurrentForce(angularVelo);
-	
-			engineDown1.setCurrentForce(0);
-			engineDown2.setCurrentForce(0);
+			ship.getEngineGroup(EngineGroup.ID_ROTATE_UP).setCurrentForce(
+					angularVelo);
+			ship.getEngineGroup(EngineGroup.ID_ROTATE_DOWN).setCurrentForce(0f);
 		} else if (angularVelo < -FastMath.ZERO_TOLERANCE) {
-			engineUp1.setCurrentForce(0);
-			engineUp2.setCurrentForce(0);
-	
-			engineDown1.setCurrentForce(-angularVelo);
-			engineDown2.setCurrentForce(-angularVelo);
+			ship.getEngineGroup(EngineGroup.ID_ROTATE_UP).setCurrentForce(0f);
+			ship.getEngineGroup(EngineGroup.ID_ROTATE_DOWN).setCurrentForce(
+					-angularVelo);
 		} else {
-			engineUp1.setCurrentForce(0);
-			engineUp2.setCurrentForce(0);
-	
-			engineDown1.setCurrentForce(0);
-			engineDown2.setCurrentForce(0);
+			ship.getEngineGroup(EngineGroup.ID_ROTATE_UP).setCurrentForce(0f);
+			ship.getEngineGroup(EngineGroup.ID_ROTATE_DOWN).setCurrentForce(0f);
 		}
 	}
 
 	public static float getAccel(float current, float dst, float speed) {
 		float desired = dst - current - speed;
-		
-//		System.out.println(dst+", "+speed+" -> "+desired);
-		
-	
+
+		// System.out.println(dst+", "+speed+" -> "+desired);
+
 		if (desired < -1) {
-			desired= -1;
+			desired = -1;
 		} else if (desired > 1) {
-			desired= 1;
+			desired = 1;
 		}
-		
+
 		return desired;
 	}
 
