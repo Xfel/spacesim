@@ -8,10 +8,19 @@ import java.util.List;
 public class EngineGroup {
 	
 	public static final String ID_MAIN_DRIVE="main";
+	
 	public static final String ID_ROTATE_LEFT="rotate.left";
 	public static final String ID_ROTATE_RIGHT="rotate.right";
 	public static final String ID_ROTATE_UP="rotate.up";
 	public static final String ID_ROTATE_DOWN="rotate.down";
+	public static final String ID_SPIN_LEFT="rotate.lspin";
+	public static final String ID_SPIN_RIGHT="rotate.rspin";
+
+	
+	public static final String ID_DRIFT_LEFT="drift.left";
+	public static final String ID_DRIFT_RIGHT="drift.right";
+	public static final String ID_DRIFT_UP="drift.up";
+	public static final String ID_DRIFT_DOWN="drift.down";
 	
 	private String id;
 
