@@ -1,53 +1,133 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="create_run_jar" name="Create Runnable Jar for Project SpaceGame">
-	<property name="launch4j.dir" location="D:\Software-Bibliothek\java\launch4j"/>
+<project default="dist" name="SpaceGame">
 
-	
-	<taskdef name="launch4j"
-	    classname="net.sf.launch4j.ant.Launch4jTask"
-	    classpath="${launch4j.dir}/launch4j.jar
-	        :${launch4j.dir}/lib/xstream.jar" />
-	
-    <!--this file was created by Eclipse Runnable JAR Export Wizard-->
-    <!--ANT 1.7 is required                                        -->
-    <target name="create_run_jar">
-        <jar destfile="build/TestApp.jar" filesetmanifest="mergewithoutmain">
-            <manifest>
-                <attribute name="Main-Class" value="test.TestApp"/>
-                <attribute name="Class-Path" value="."/>
-            </manifest>
-            <fileset dir="D:/Dropbox/space/SpaceGame/bin"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/jME3-core.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/jME3-jbullet.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/jME3-blender.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/jME3-desktop.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/jME3-effects.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/jME3-jogg.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/jME3-lwjgl.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/jME3-networking.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/jME3-niftygui.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/jME3-plugins.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/nifty.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/nifty-default-controls.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/eventbus.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/jbullet.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/jinput.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/j-ogg-oggd.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/j-ogg-vorbisd.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/lwjgl.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/nifty-style-black.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/stack-alloc.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/vecmath.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/xmlpull-xpp3.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/jME3-lwjgl-natives.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/jME3-testdata.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/retrace.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/proguard.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/xstream.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/launch4j.jar"/>
-            <zipfileset excludes="META-INF/*.SF" src="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs/jME3-terrain.jar"/>
-        </jar>
-    	
-    	<launch4j configFile="./TestApp.xml" jar="build/TestApp.jar" />
-    </target>
+	<property name="app.name" value="SpaceGame" />
+	<property name="app.main.class" value="test.TestApp" />
+
+
+	<!-- Source locations -->
+	<property name="src.dir" location="src" />
+	<property name="assets.dir" location="assets" />
+
+	<!-- Build locations -->
+	<property name="build.dir" location="build" />
+	<property name="build.classes.dir" location="${build.dir}/classes" />
+	<property name="build.assets.dir" location="${build.dir}/assets" />
+	<property name="dist.dir" location="${build.dir}/dist" />
+
+	<!-- Environment settings -->
+	<property name="launch4j.dir" location="D:\Software-Bibliothek\java\launch4j" />
+	<property name="jmonkeyengine.platform.dir" location="C:/Program Files/jmonkeyplatform/jmonkeyplatform" />
+
+	<path id="classpath">
+		<fileset dir="${jmonkeyengine.platform.dir}/libs" includes="*.jar" />
+	</path>
+
+	<!-- ================================= 
+          target: clean                      
+         ================================= -->
+	<target name="clean">
+		<delete file="${build.dir}" />
+
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${build.classes.dir}" />
+		<mkdir dir="${build.assets.dir}" />
+		<mkdir dir="${dist.dir}" />
+
+	</target>
+
+	<!-- ================================= 
+          target: compile              
+         ================================= -->
+	<target name="compile" depends="clean" description="Compile the source code">
+		<!-- compile the code -->
+		<javac srcdir="${src.dir}" destdir="${build.classes.dir}" classpathref="classpath" debug="off" />
+
+		<!-- compile the assets -->
+		<copy todir="${build.assets.dir}">
+			<fileset dir="${assets.dir}" includes="**/*.j3o, **/*.j3m, **/*.j3md, **/*.png, **/*.dds, **/*.jpg, **/*.blend" />
+		</copy>
+	</target>
+
+	<!-- ================================= 
+          target: jar              
+         ================================= -->
+	<target name="jar" depends="compile" description="Create a jar file for the application and one for the assets">
+		<jar destfile="${dist.dir}/${app.name}.jar">
+			<manifest>
+				<!--
+<attribute name="Main-Class" value="test.TestApp" />
+				<attribute name="Class-Path" value="." />
+-->
+			</manifest>
+			<fileset dir="${build.classes.dir}" />
+		</jar>
+
+		<jar destfile="${dist.dir}/assets.jar">
+			<fileset dir="${build.assets.dir}" />
+		</jar>
+	</target>
+
+	<!-- ================================= 
+          target: dist              
+         ================================= -->
+	<target name="dist" depends="jar" description="create the distribution assembly">
+		<mkdir dir="${dist.dir}/lib" />
+		<copy todir="${dist.dir}/lib">
+			<path refid="classpath" />
+		</copy>
+
+		<!-- Create launch4j exe -->
+		
+		<ant antfile="${basedir}/launch4j.xml" dir="${launch4j.dir}">
+			<property name="basedir" location="${launch4j.dir}"/>
+			<property name="user.dir" location="${launch4j.dir}"/>
+
+		</ant>
+	</target>
+
+
+	<!--this file was created by Eclipse Runnable JAR Export Wizard-->
+	<!--ANT 1.7 is required                                        -->
+	<target name="create_run_jar">
+
+		<jar destfile="build/TestApp.jar" filesetmanifest="mergewithoutmain">
+			<manifest>
+				<attribute name="Main-Class" value="test.TestApp" />
+				<attribute name="Class-Path" value="." />
+			</manifest>
+			<fileset dir="${build.classes.dir}" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/jME3-core.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/jME3-jbullet.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/jME3-blender.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/jME3-desktop.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/jME3-effects.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/jME3-jogg.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/jME3-lwjgl.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/jME3-networking.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/jME3-niftygui.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/jME3-plugins.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/jME3-terrain.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/nifty.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/nifty-default-controls.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/eventbus.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/jbullet.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/jinput.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/j-ogg-oggd.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/j-ogg-vorbisd.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/lwjgl.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/nifty-style-black.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/stack-alloc.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/vecmath.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/xmlpull-xpp3.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/jME3-lwjgl-natives.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/jME3-testdata.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/retrace.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/proguard.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/xstream.jar" />
+			<zipfileset excludes="META-INF/*.SF" src="${jmonkeyengine.platform.dir}/libs/launch4j.jar" />
+		</jar>
+
+		<launch4j configFile="./TestApp.xml" jar="build/TestApp.jar" />
+	</target>
 </project>

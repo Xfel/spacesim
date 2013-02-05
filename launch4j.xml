@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="launch4j" name="SpaceGame Launch4j" basedir="${launch4j.dir}">
+
+	<taskdef name="launch4j" classname="net.sf.launch4j.ant.Launch4jTask" classpath="${launch4j.dir}/launch4j.jar
+		        :${launch4j.dir}/lib/xstream.jar" />
+
+	<!-- - - - - - - - - - - - - - - - - - 
+          target: launch4j                      
+         - - - - - - - - - - - - - - - - - -->
+	<target name="launch4j">
+		<echo>${user.dir}</echo>
+		<launch4j  bindir="${launch4j.dir}/bin" >
+			<config headerType="gui" outfile="${dist.dir}/${app.name}.exe" dontWrapJar="true" jarPath="${app.name}.jar" errTitle="${app.name}" customProcName="true" stayAlive="true">
+				<jre minVersion="1.6.0" />
+				<classPath mainClass="${app.main.class}">
+					<cp>assets.jar</cp>
+					<cp>lib/*.jar</cp>
+				</classPath>
+			</config>
+		</launch4j>
+	</target>
+
+
+</project>
