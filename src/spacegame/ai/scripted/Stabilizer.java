@@ -49,5 +49,46 @@ public class Stabilizer extends Autopilot {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+	public void clearTask() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public static void setEngineRotation(float angularVelo, IShipEngine engineDown1,
+			IShipEngine engineDown2, IShipEngine engineUp1, IShipEngine engineUp2) {
+		if (angularVelo > FastMath.ZERO_TOLERANCE) {
+			engineUp1.setCurrentForce(angularVelo);
+			engineUp2.setCurrentForce(angularVelo);
+	
+			engineDown1.setCurrentForce(0);
+			engineDown2.setCurrentForce(0);
+		} else if (angularVelo < -FastMath.ZERO_TOLERANCE) {
+			engineUp1.setCurrentForce(0);
+			engineUp2.setCurrentForce(0);
+	
+			engineDown1.setCurrentForce(-angularVelo);
+			engineDown2.setCurrentForce(-angularVelo);
+		} else {
+			engineUp1.setCurrentForce(0);
+			engineUp2.setCurrentForce(0);
+	
+			engineDown1.setCurrentForce(0);
+			engineDown2.setCurrentForce(0);
+		}
+	}
+
+	public static float getAccel(float current, float dst, float speed) {
+		float desired = dst - current - speed;
+	
+		if (desired < -1) {
+			desired= -1;
+		} else if (desired > 1) {
+			desired= 1;
+		}
+		
+		return desired;
+	}
 
 }

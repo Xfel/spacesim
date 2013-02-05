@@ -5,7 +5,6 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 
 import spacegame.ai.Autopilot;
-import spacegame.model.IShipEngine;
 import spacegame.model.ISpaceShip;
 
 public class Rotator extends Autopilot {
@@ -23,7 +22,8 @@ public class Rotator extends Autopilot {
 		if (accel) {
 			Vector3f currentHeading = getShip().getRotation().mult(Vector3f.UNIT_X);
 			float angleBetween = targetHeading.angleBetween(currentHeading);
-
+//			System.out.println(angleBetween*FastMath.RAD_TO_DEG);
+			
 			if (angleBetween < angle / 2) {
 				// stop accel
 				accel = false;
@@ -35,6 +35,7 @@ public class Rotator extends Autopilot {
 		} else if (decel) {
 			Vector3f currentHeading = getShip().getRotation().mult(Vector3f.UNIT_X);
 			float angleBetween = targetHeading.angleBetween(currentHeading);
+//			System.out.println(angleBetween*FastMath.RAD_TO_DEG);
 			if(angleBetween<FastMath.ZERO_TOLERANCE){
 				decel=false;
 				getShip().stopAllEngines();
@@ -54,31 +55,8 @@ public class Rotator extends Autopilot {
 	}
 
 	private void setRotationSpeed(ISpaceShip ship, Vector3f angvel) {
-		setEngineRotation(angvel.y, ship.getEngine(2), ship.getEngine(7), ship.getEngine(3), ship.getEngine(6));
-		setEngineRotation(angvel.z, ship.getEngine(4), ship.getEngine(9), ship.getEngine(5), ship.getEngine(8));
-	}
-
-	private void setEngineRotation(float angularVelo, IShipEngine engineDown1,
-			IShipEngine engineDown2, IShipEngine engineUp1, IShipEngine engineUp2) {
-		if (angularVelo > FastMath.ZERO_TOLERANCE) {
-			engineUp1.setCurrentForce(angularVelo);
-			engineUp2.setCurrentForce(angularVelo);
-
-			engineDown1.setCurrentForce(0);
-			engineDown2.setCurrentForce(0);
-		} else if (angularVelo < -FastMath.ZERO_TOLERANCE) {
-			engineUp1.setCurrentForce(0);
-			engineUp2.setCurrentForce(0);
-
-			engineDown1.setCurrentForce(-angularVelo);
-			engineDown2.setCurrentForce(-angularVelo);
-		} else {
-			engineUp1.setCurrentForce(0);
-			engineUp2.setCurrentForce(0);
-
-			engineDown1.setCurrentForce(0);
-			engineDown2.setCurrentForce(0);
-		}
+		Stabilizer.setEngineRotation(angvel.y, ship.getEngine(2), ship.getEngine(7), ship.getEngine(3), ship.getEngine(6));
+		Stabilizer.setEngineRotation(angvel.z, ship.getEngine(4), ship.getEngine(9), ship.getEngine(5), ship.getEngine(8));
 	}
 
 	@Override
@@ -102,6 +80,12 @@ public class Rotator extends Autopilot {
 		float[] angles = rot.toAngles(null);
 
 		this.rotSpeed = new Vector3f(angles[0], angles[1], angles[2]).normalizeLocal();
+	}
+	
+	@Override
+	public void clearTask() {
+		accel=false;
+		decel=false;
 	}
 
 }

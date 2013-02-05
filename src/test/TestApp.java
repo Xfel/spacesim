@@ -5,6 +5,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.BackingStoreException;
 
+import javax.swing.JOptionPane;
+
 import org.lwjgl.input.Keyboard;
 
 import spacegame.ai.Autopilot;
@@ -146,7 +148,6 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 
 		autopilot = new Rotator();
 		autopilot.setShip(sp);
-//		autopilot.queueTask(new Vector3f(0,1,0), null);
 	}
 
 	private void createAsteroid(Vector3f vector3f) {
@@ -378,7 +379,14 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 		} else if (name.equals("autopilot")) {
 			if (isPressed) {
 				activateAP = !activateAP;
-				if (!activateAP) {
+				if (activateAP) {
+					String input = JOptionPane.showInputDialog("Enter tatget vector or cancel for stabilize");
+					if (input != null) {
+						autopilot.queueTask(new Vector3f(0, 1, 0), null);
+					}else{
+						autopilot.clearTask();
+					}
+				} else {
 					sp.stopAllEngines();
 				}
 			}

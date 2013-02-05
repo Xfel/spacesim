@@ -50,5 +50,7 @@ public abstract class Autopilot implements IShipComponent {
 	 */
 	@Override
 	public abstract void update();
+
+	public abstract void clearTask();
 	
 }
