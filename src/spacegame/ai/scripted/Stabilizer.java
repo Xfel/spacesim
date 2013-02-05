@@ -17,20 +17,23 @@ public class Stabilizer extends Autopilot {
 
 		float[] angles = angv.toAngles(null);
 
-		adjust(angles[1], getShip());
-		adjust(angles[2], getShip());
+		adjust(angles[0],getShip().getEngineGroup(EngineGroup.ID_SPIN_RIGHT),getShip().getEngineGroup(EngineGroup.ID_SPIN_LEFT));
+		adjust(angles[1],getShip().getEngineGroup(EngineGroup.ID_ROTATE_RIGHT),getShip().getEngineGroup(EngineGroup.ID_ROTATE_LEFT));
+		adjust(angles[2],getShip().getEngineGroup(EngineGroup.ID_ROTATE_DOWN),getShip().getEngineGroup(EngineGroup.ID_ROTATE_UP));
+
 	}
 
-	public static void adjust(float angle, ISpaceShip ship) {
+	public static void adjust(float angle, EngineGroup rightDown, EngineGroup leftUp) {
+
 		if (angle > FastMath.ZERO_TOLERANCE) {
-			ship.getEngineGroup(EngineGroup.ID_ROTATE_UP).setCurrentForce(1f);
-			ship.getEngineGroup(EngineGroup.ID_ROTATE_DOWN).setCurrentForce(0f);
+			rightDown.setCurrentForce(1f);
+			leftUp.setCurrentForce(0f);
 		} else if (angle < -FastMath.ZERO_TOLERANCE) {
-			ship.getEngineGroup(EngineGroup.ID_ROTATE_UP).setCurrentForce(0f);
-			ship.getEngineGroup(EngineGroup.ID_ROTATE_DOWN).setCurrentForce(1f);
+			rightDown.setCurrentForce(0f);
+			leftUp.setCurrentForce(1f);
 		} else {
-			ship.getEngineGroup(EngineGroup.ID_ROTATE_UP).setCurrentForce(0f);
-			ship.getEngineGroup(EngineGroup.ID_ROTATE_DOWN).setCurrentForce(0f);
+			rightDown.setCurrentForce(0f);
+			leftUp.setCurrentForce(0f);
 		}
 	}
 
@@ -46,18 +49,16 @@ public class Stabilizer extends Autopilot {
 
 	}
 
-	public static void setEngineRotation(float angularVelo, ISpaceShip ship) {
+	public static void setEngineRotation(float angularVelo, EngineGroup rightDown, EngineGroup leftUp) {
 		if (angularVelo > FastMath.ZERO_TOLERANCE) {
-			ship.getEngineGroup(EngineGroup.ID_ROTATE_UP).setCurrentForce(
-					angularVelo);
-			ship.getEngineGroup(EngineGroup.ID_ROTATE_DOWN).setCurrentForce(0f);
+			rightDown.setCurrentForce(angularVelo);
+			leftUp.setCurrentForce(0f);
 		} else if (angularVelo < -FastMath.ZERO_TOLERANCE) {
-			ship.getEngineGroup(EngineGroup.ID_ROTATE_UP).setCurrentForce(0f);
-			ship.getEngineGroup(EngineGroup.ID_ROTATE_DOWN).setCurrentForce(
-					-angularVelo);
+			rightDown.setCurrentForce(0f);
+			leftUp.setCurrentForce(angularVelo);
 		} else {
-			ship.getEngineGroup(EngineGroup.ID_ROTATE_UP).setCurrentForce(0f);
-			ship.getEngineGroup(EngineGroup.ID_ROTATE_DOWN).setCurrentForce(0f);
+			rightDown.setCurrentForce(0f);
+			leftUp.setCurrentForce(0f);
 		}
 	}
 
@@ -74,5 +75,4 @@ public class Stabilizer extends Autopilot {
 
 		return desired;
 	}
-
 }

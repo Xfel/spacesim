@@ -5,6 +5,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 
 import spacegame.ai.Autopilot;
+import spacegame.model.EngineGroup;
 import spacegame.model.ISpaceShip;
 
 public class Rotator extends Autopilot {
@@ -33,14 +34,15 @@ public class Rotator extends Autopilot {
 			
 			float[] dsts=rot.toAngles(null);
 			
-			Stabilizer.setEngineRotation(Stabilizer.getAccel(0, dsts[1], angles[1]), ship);
-			Stabilizer.setEngineRotation(Stabilizer.getAccel(0, dsts[2], angles[2]), ship);
-			
+			Stabilizer.setEngineRotation(Stabilizer.getAccel(0, dsts[0], angles[0]),getShip().getEngineGroup(EngineGroup.ID_SPIN_RIGHT), getShip().getEngineGroup(EngineGroup.ID_SPIN_LEFT));
+			Stabilizer.setEngineRotation(Stabilizer.getAccel(0, dsts[1], angles[1]),getShip().getEngineGroup(EngineGroup.ID_ROTATE_RIGHT), getShip().getEngineGroup(EngineGroup.ID_ROTATE_LEFT));
+			Stabilizer.setEngineRotation(Stabilizer.getAccel(0, dsts[2], angles[2]), getShip().getEngineGroup(EngineGroup.ID_ROTATE_DOWN),getShip().getEngineGroup(EngineGroup.ID_ROTATE_UP));
 		} else {
 
-			Stabilizer.adjust(angles[1], ship);
-			Stabilizer.adjust(angles[2], ship);
-		}
+			Stabilizer.adjust(angles[0],getShip().getEngineGroup(EngineGroup.ID_SPIN_RIGHT),getShip().getEngineGroup(EngineGroup.ID_SPIN_LEFT));
+			Stabilizer.adjust(angles[1],getShip().getEngineGroup(EngineGroup.ID_ROTATE_RIGHT),getShip().getEngineGroup(EngineGroup.ID_ROTATE_LEFT));
+			Stabilizer.adjust(angles[2],getShip().getEngineGroup(EngineGroup.ID_ROTATE_DOWN),getShip().getEngineGroup(EngineGroup.ID_ROTATE_UP));
+}
 	}
 
 //	private void setRotationSpeed(ISpaceShip ship, Vector3f angvel) {
