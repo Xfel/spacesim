@@ -55,7 +55,7 @@ public class Stabilizer extends Autopilot {
 			leftUp.setCurrentForce(0f);
 		} else if (angularVelo < -FastMath.ZERO_TOLERANCE) {
 			rightDown.setCurrentForce(0f);
-			leftUp.setCurrentForce(angularVelo);
+			leftUp.setCurrentForce(-angularVelo);
 		} else {
 			rightDown.setCurrentForce(0f);
 			leftUp.setCurrentForce(0f);
