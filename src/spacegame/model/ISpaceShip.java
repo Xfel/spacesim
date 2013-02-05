@@ -12,4 +12,6 @@ public interface ISpaceShip extends ISpaceObject {
 
 	void stopAllEngines();
 	
+	EngineGroup getEngineGroup(String id);
+	
 }
