@@ -217,4 +217,10 @@ public class SimpleSpaceShip extends SimpleSpaceObject implements ISpaceShip {
 		return engines.get(id);
 	}
 
+	public void stopAllEngines() {
+		for(Engine e:engines){
+			e.setCurrentForce(0);
+		}
+	}
+
 }

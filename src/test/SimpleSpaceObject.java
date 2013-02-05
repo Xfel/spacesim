@@ -5,6 +5,9 @@ import spacegame.model.ISpaceShip;
 
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.PhysicsTickListener;
+import com.jme3.bullet.collision.PhysicsCollisionEvent;
+import com.jme3.bullet.collision.PhysicsCollisionListener;
+import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.math.Quaternion;
@@ -12,7 +15,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
-public class SimpleSpaceObject implements ISpaceObject, PhysicsTickListener {
+public class SimpleSpaceObject implements ISpaceObject, PhysicsTickListener, PhysicsCollisionListener {
 
 	protected Node node;
 	protected RigidBodyControl physics;
@@ -31,8 +34,15 @@ public class SimpleSpaceObject implements ISpaceObject, PhysicsTickListener {
 //		physics.setFriction(0);
 		physics.setAngularSleepingThreshold(0);
 		node.addControl(physics);
+		physics.setUserObject(this);
 	}
 
+	public void attach(PhysicsSpace space){
+		space.addCollisionObject(physics);
+		space.addCollisionListener(this);
+		space.addTickListener(this);
+	}
+	
 	@Override
 	public float getMass() {
 		return physics.getMass();
@@ -63,7 +73,8 @@ public class SimpleSpaceObject implements ISpaceObject, PhysicsTickListener {
 		physics.getPhysicsLocation(location);
 		physics.getPhysicsRotation(rotation);
 
-		// get angular velocity and convert it to local space
+		// FIXME angles get clamped!
+		// get angular velocity and convert it to local space 
 		// using linearVelocity as temporary here
 		physics.getAngularVelocity(linearVelocity);
 		angularVelocity.fromAngles(linearVelocity.getX(), linearVelocity.getY(), linearVelocity.getZ());
@@ -78,7 +89,7 @@ public class SimpleSpaceObject implements ISpaceObject, PhysicsTickListener {
 	}
 
 	@Override
-	public void prePhysicsTick(PhysicsSpace arg0, float arg1) {
+	public void prePhysicsTick(PhysicsSpace space, float f) {
 
 	}
 
@@ -88,6 +99,20 @@ public class SimpleSpaceObject implements ISpaceObject, PhysicsTickListener {
 
 	public RigidBodyControl getPhysics() {
 		return physics;
+	}
+
+	@Override
+	public void collision(PhysicsCollisionEvent evt) {
+		if (evt.getObjectA() == physics && evt.getObjectB().getUserObject() instanceof ISpaceObject) {
+			onCollision((ISpaceObject) evt.getObjectB().getUserObject(), evt);
+		} else if (evt.getObjectB() == physics && evt.getObjectA().getUserObject() instanceof ISpaceObject) {
+			onCollision((ISpaceObject) evt.getObjectA().getUserObject(), evt);
+		}
+	}
+
+	protected void onCollision(ISpaceObject object, PhysicsCollisionEvent evt) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

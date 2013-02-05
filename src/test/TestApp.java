@@ -7,6 +7,10 @@ import java.util.prefs.BackingStoreException;
 
 import org.lwjgl.input.Keyboard;
 
+import spacegame.ai.Autopilot;
+import spacegame.ai.scripted.Rotator;
+import spacegame.ai.scripted.Stabilizer;
+
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.bullet.BulletAppState;
@@ -66,6 +70,9 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 	private SimpleSpaceShip sp;
 	private BitmapText linVeloText;
 	private BitmapText angVeloText;
+	private BitmapText headingText;
+	private boolean activateAP;
+	private Autopilot autopilot;
 
 	@Override
 	public void simpleInitApp() {
@@ -93,18 +100,20 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 
 		physicsState.getPhysicsSpace().add(physics = sp.getPhysics());
 		physicsState.getPhysicsSpace().addTickListener(sp);
-		
+
 		createAsteroid(new Vector3f(20, 0, 0));
 		createAsteroid(new Vector3f(10, 40, 0));
 		createAsteroid(new Vector3f(0, 0, 30));
 
-		inputManager.addListener(this, "reset", "drive", "rotateUp", "rotateDown", "rotateLeft", "rotateRight");
+		inputManager.addListener(this, "autopilot", "reset", "drive", "rotateUp", "rotateDown", "rotateLeft",
+				"rotateRight");
 		inputManager.addMapping("drive", new KeyTrigger(Keyboard.KEY_SPACE));
 		inputManager.addMapping("rotateUp", new KeyTrigger(Keyboard.KEY_UP));
 		inputManager.addMapping("rotateDown", new KeyTrigger(Keyboard.KEY_DOWN));
 		inputManager.addMapping("rotateLeft", new KeyTrigger(Keyboard.KEY_LEFT));
 		inputManager.addMapping("rotateRight", new KeyTrigger(Keyboard.KEY_RIGHT));
 		inputManager.addMapping("reset", new KeyTrigger(Keyboard.KEY_RETURN));
+		inputManager.addMapping("autopilot", new KeyTrigger(Keyboard.KEY_P));
 
 		final ScreenshotAppState state = new ScreenshotAppState();
 		stateManager.attach(state);
@@ -134,22 +143,27 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 //		rootNode.addLight(bgLight);
 
 		createHUD();
+
+		autopilot = new Rotator();
+		autopilot.setShip(sp);
+//		autopilot.queueTask(new Vector3f(0,1,0), null);
 	}
 
 	private void createAsteroid(Vector3f vector3f) {
-		Spatial aster= assetManager.loadModel("Models/Asteroids/rock_textured.blend");
-		
-		
-		
-		SimpleSpaceObject astObj=new SimpleSpaceObject(((Node)aster).getChild(2), 40);
-		
+		Spatial aster = assetManager.loadModel("Models/Asteroids/rock_textured.blend");
+
+		// getChild to exclude blender's light and camera
+		SimpleSpaceObject astObj = new SimpleSpaceObject(aster, 40);
+
 		rootNode.attachChild(astObj.getNode());
 		astObj.getPhysics().setPhysicsLocation(vector3f);
 
 		physicsState.getPhysicsSpace().add(astObj.getPhysics());
 		physicsState.getPhysicsSpace().addTickListener(astObj);
-		
-		astObj.getPhysics().setAngularVelocity(new Vector3f(FastMath.nextRandomFloat()*0.5f, FastMath.nextRandomFloat()*0.5f, FastMath.nextRandomFloat()*0.5f));
+
+		astObj.getPhysics().setAngularVelocity(
+				new Vector3f(FastMath.nextRandomFloat() * 0.5f, FastMath.nextRandomFloat() * 0.5f, FastMath
+						.nextRandomFloat() * 0.5f));
 	}
 
 	private void createHUD() {
@@ -162,6 +176,12 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 		angVeloText.setLocalTranslation(0, settings.getHeight() - linVeloText.getLineHeight(), 0);
 		angVeloText.setText("Angular Velocity:");
 		guiNode.attachChild(angVeloText);
+
+		headingText = new BitmapText(guiFont);
+		headingText.setLocalTranslation(0,
+				settings.getHeight() - linVeloText.getLineHeight() - angVeloText.getLineHeight(), 0);
+		headingText.setText("Heading:");
+		guiNode.attachChild(headingText);
 	}
 
 	@Override
@@ -181,6 +201,13 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 //		sb.append(')');
 
 		angVeloText.setText(String.format("Angular Velocity: (%.2f, %.2f, %.2f)", angles[0], angles[1], angles[2]));
+
+		Vector3f heading = sp.getRotation().mult(Vector3f.UNIT_X);
+		headingText.setText(String.format("Heading: (%.2f, %.2f, %.2f)", heading.x, heading.y, heading.z));
+
+		if (activateAP) {
+			autopilot.update();
+		}
 	}
 
 	@Override
@@ -348,6 +375,13 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 
 			sp.getPhysics().setPhysicsLocation(Vector3f.ZERO);
 			sp.getPhysics().setPhysicsRotation(Quaternion.IDENTITY);
+		} else if (name.equals("autopilot")) {
+			if (isPressed) {
+				activateAP = !activateAP;
+				if (!activateAP) {
+					sp.stopAllEngines();
+				}
+			}
 		}
 	}
 
