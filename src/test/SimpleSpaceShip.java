@@ -1,6 +1,7 @@
 package test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
@@ -21,6 +22,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
+import spacegame.model.EngineGroup;
 import spacegame.model.IShipEngine;
 import spacegame.model.ISpaceShip;
 
@@ -48,7 +50,7 @@ public class SimpleSpaceShip extends SimpleSpaceObject implements ISpaceShip {
 
 			pe = createParticleEmitter(assets);
 			pe.setLocalTranslation(location);
-			
+
 			node.attachChild(pe);
 		}
 
@@ -116,15 +118,15 @@ public class SimpleSpaceShip extends SimpleSpaceObject implements ISpaceShip {
 
 		@Override
 		public void setCurrentForce(float force) {
-			if(force==currentForce){
+			if (force == currentForce) {
 				return;
 			}
 			if (force < 0 || force > 1) {
 				throw new IllegalArgumentException("Force out of supported bounds");
 			}
-
+			boolean wasNotZero = this.currentForce > FastMath.FLT_EPSILON;
 			this.currentForce = force;
-			if (force > FastMath.FLT_EPSILON) {
+			if (force > FastMath.FLT_EPSILON && !wasNotZero) {
 				pe.setParticlesPerSec(20f);
 			} else {
 				pe.setParticlesPerSec(0);
@@ -172,39 +174,44 @@ public class SimpleSpaceShip extends SimpleSpaceObject implements ISpaceShip {
 
 	private List<Engine> engines = new ArrayList<Engine>();
 
+	private HashMap<String, EngineGroup> engineGroups = new HashMap<String, EngineGroup>();
+
 	public SimpleSpaceShip(AssetManager assets) {
 		super(assets.loadModel("Models/Complete/FirstShip/FirstShip_LowPoly.blend"), 20f);
-		
-		//(AssetManager assets, Vector3f location, Vector3f defaultDirection, float maxModulationAngle,float maxForce
-		
+
+		// (AssetManager assets, Vector3f location, Vector3f defaultDirection,
+		// float maxModulationAngle,float maxForce
+
 		// the main engines
 		/* 0 */engines.add(new Engine(assets, new Vector3f(-3.6569f, 0, -2.2305f), new Vector3f(1, 0, 0), 0, 10f));
 		/* 1 */engines.add(new Engine(assets, new Vector3f(-3.6569f, 0, 2.2305f), new Vector3f(1, 0, 0), 0, 10f));
-		
+
 		// the control engines
-		//front right
+		// front right
 		/* 2 */engines.add(new Engine(assets, new Vector3f(2.5f, -0.0f, 1.0f), new Vector3f(0, 0, -1), 0, 2f));
-		//front left
+		// front left
 		/* 3 */engines.add(new Engine(assets, new Vector3f(2.5f, -0.0f, -1.0f), new Vector3f(0, 0, 1), 0, 2f));
-		//front top
+		// front top
 		/* 4 */engines.add(new Engine(assets, new Vector3f(2.5f, -1.0f, 0f), new Vector3f(0, 1, 0), 0, 2f));
-		//front bottom
+		// front bottom
 		/* 5 */engines.add(new Engine(assets, new Vector3f(2.5f, 1.0f, 0f), new Vector3f(0, -1, 0), 0, 2f));
-		//back right
+		// back right
 		/* 6 */engines.add(new Engine(assets, new Vector3f(-2.5f, 0.0f, 1.0f), new Vector3f(0, 0, -1), 0, 2f));
-		//back left
+		// back left
 		/* 7 */engines.add(new Engine(assets, new Vector3f(-2.5f, 0.0f, -1.0f), new Vector3f(0, 0, 1), 0, 2f));
-		//back top
+		// back top
 		/* 8 */engines.add(new Engine(assets, new Vector3f(-2.5f, -1.0f, 0f), new Vector3f(0, 1, 0), 0, 2f));
-		//back bottom
+		// back bottom
 		/* 9 */engines.add(new Engine(assets, new Vector3f(-2.5f, 1.0f, 0f), new Vector3f(0, -1, 0), 0, 2f));
+
+		addEngineGroup(new EngineGroup(EngineGroup.ID_MAIN_DRIVE, this, 0, 1));
 	}
 
 	@Override
 	public void prePhysicsTick(PhysicsSpace space, float f) {
 		for (Engine engine : engines) {
 
-			Vector3f force = engine.getActualDirection().mult(engine.getCurrentForce()*engine.getMaximumForce());
+			Vector3f force = engine.getActualDirection().mult(engine.getCurrentForce() * engine.getMaximumForce());
 
 			physics.applyForce(rotation.multLocal(force), rotation.mult(engine.getLocation()));
 		}
@@ -214,16 +221,24 @@ public class SimpleSpaceShip extends SimpleSpaceObject implements ISpaceShip {
 	public List<? extends IShipEngine> getEngines() {
 		return engines;
 	}
-	
+
 	@Override
 	public IShipEngine getEngine(int id) {
 		return engines.get(id);
 	}
 
 	public void stopAllEngines() {
-		for(Engine e:engines){
+		for (Engine e : engines) {
 			e.setCurrentForce(0);
 		}
 	}
 
+	@Override
+	public EngineGroup getEngineGroup(String id) {
+		return engineGroups.get(id);
+	}
+
+	protected void addEngineGroup(EngineGroup group) {
+		engineGroups.put(group.getId(), group);
+	}
 }
