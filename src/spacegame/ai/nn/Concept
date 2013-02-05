@@ -1,0 +1,63 @@
+General Idea:
+
+A 3-layer SRN (Simple Recurrent Network) with a Context-Unit connected to the hidden layer (giving a 4-layer total net).
+
+There are the following input-units:
+
+Location		(extends to 3 input nodes, one for each coordinate, as getLocation() returns a 3-dimensional vector)
+Rotation		(extends to 4 input nodes, one for each coordinate, as getRotation() returns a Quaternion)
+TargetLocation	(see Location)
+TargetRotation	(see Rotation)
+==> Total = 14 input units
+
+
+There are the following output-units:
+
+EngineForce (for every engine, the total number is variable)
+//UNUSED// EngineAngle (for rotation of the engine
+==> Total = variable, depending on the number of engines
+
+
+General Layout:
+
+A learning AI has a matrix which codes which weights may be modified and which not, giving 1 or 0 in the corresponding field.
+Every AI has a n*n-matrix where n is the total number of nodes (in our example 14 + number of engines + hidden Units*2). Every field of the matrix except the diagonal line is potentially filled. The diagonal stays free as we do not allow direct transition to itself. This matrix codes the weight transition from one node to another.
+Also, every AI has a n-sized vector which codes the current state of the Net. In every step, the weight-matrix is multiplied with the vector to determine the next output.
+
+An example:
+
+input units: 2
+hidden units: 3
+context units: 3
+output units: 2
+
+
+Modifier Matrix:
+
+			1	2	3	4	5	6	7	8	9	10
+input	1	0	0	1	1	1	0	0	0	0	0
+input	2	0	0	1	1	1	0	0	0	0	0
+hidden	3	0	0	0	0	0	0	0	0	1	1
+hidden	4	0	0	0	0	0	0	0	0	1	1
+hidden	5	0	0	0	0	0	0	0	0	1	1
+context	6	0	0	1	1	1	0	0	0	0	0
+context	7	0	0	1	1	1	0	0	0	0	0
+context	8	0	0	1	1	1	0	0	0	0	0
+output	9	0	0	0	0	0	0	0	0	0	0
+output	10	0	0	0	0	0	0	0	0	0	0
+
+
+Weight Matrix:
+
+			1	2	3	4	5	6	7	8	9	10
+input	1	0	0	-1	2	50	0	0	0	0	0
+input	2	0	0	-3	2	-4	0	0	0	0	0
+hidden	3	0	0	0	0	0	1	0	0	1	1		//note the transition from 3 to 6 which is always 1 (compare the field with the Modifier Matrix). This is the context.
+hidden	4	0	0	0	0	0	0	1	0	1	1		//note the transition from 4 to 7 which is always 1 (compare the field with the Modifier Matrix). This is the context.
+hidden	5	0	0	0	0	0	0	0	1	1	1		//note the transition from 5 to 8 which is always 1 (compare the field with the Modifier Matrix). This is the context.
+context	6	0	0	1	1	1	0	0	0	0	0
+context	7	0	0	1	1	1	0	0	0	0	0
+context	8	0	0	1	1	1	0	0	0	0	0
+output	9	0	0	0	0	0	0	0	0	0	0
+output	10	0	0	0	0	0	0	0	0	0	0
+ 
