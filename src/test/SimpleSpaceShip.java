@@ -183,28 +183,57 @@ public class SimpleSpaceShip extends SimpleSpaceObject implements ISpaceShip {
 		// float maxModulationAngle,float maxForce
 
 		// the main engines
-		/* 0 */engines.add(new Engine(assets, new Vector3f(-3.6569f, 0, -2.2305f), new Vector3f(1, 0, 0), 0, 10f));
-		/* 1 */engines.add(new Engine(assets, new Vector3f(-3.6569f, 0, 2.2305f), new Vector3f(1, 0, 0), 0, 10f));
+		/*	0	*/engines.add(new Engine(assets, new Vector3f(-3.6569f, 0, -2.2305f), new Vector3f(1, 0, 0), 0, 10f));
+		/*	1	*/engines.add(new Engine(assets, new Vector3f(-3.6569f, 0, 2.2305f), new Vector3f(1, 0, 0), 0, 10f));
 
 		// the control engines
-		// front right
-		/* 2 */engines.add(new Engine(assets, new Vector3f(2.5f, -0.0f, 1.0f), new Vector3f(0, 0, -1), 0, 2f));
-		// front left
-		/* 3 */engines.add(new Engine(assets, new Vector3f(2.5f, -0.0f, -1.0f), new Vector3f(0, 0, 1), 0, 2f));
-		// front top
-		/* 4 */engines.add(new Engine(assets, new Vector3f(2.5f, -1.0f, 0f), new Vector3f(0, 1, 0), 0, 2f));
-		// front bottom
-		/* 5 */engines.add(new Engine(assets, new Vector3f(2.5f, 1.0f, 0f), new Vector3f(0, -1, 0), 0, 2f));
-		// back right
-		/* 6 */engines.add(new Engine(assets, new Vector3f(-2.5f, 0.0f, 1.0f), new Vector3f(0, 0, -1), 0, 2f));
-		// back left
-		/* 7 */engines.add(new Engine(assets, new Vector3f(-2.5f, 0.0f, -1.0f), new Vector3f(0, 0, 1), 0, 2f));
-		// back top
-		/* 8 */engines.add(new Engine(assets, new Vector3f(-2.5f, -1.0f, 0f), new Vector3f(0, 1, 0), 0, 2f));
-		// back bottom
-		/* 9 */engines.add(new Engine(assets, new Vector3f(-2.5f, 1.0f, 0f), new Vector3f(0, -1, 0), 0, 2f));
+		// front right top
+		/*	2	*/engines.add(new Engine(assets, new Vector3f(2.5f, 0.5f, 1.0f), new Vector3f(0, 0, -1), 0, 2f));
+		// front right bottom
+		/*	3	*/engines.add(new Engine(assets, new Vector3f(2.5f, -0.5f, 1.0f), new Vector3f(0, 0, -1), 0, 2f));
+		// front left top
+		/*	4	*/engines.add(new Engine(assets, new Vector3f(2.5f, 0.5f, -1.0f), new Vector3f(0, 0, 1), 0, 2f));
+		// front left bottom
+		/*	5	*/engines.add(new Engine(assets, new Vector3f(2.5f, -0.5f, -1.0f), new Vector3f(0, 0, 1), 0, 2f));
+		// front top right
+		/*	6	*/engines.add(new Engine(assets, new Vector3f(2.5f, 1.0f, 0.5f), new Vector3f(0, -1, 0), 0, 2f));
+		// front top left
+		/*	7	*/engines.add(new Engine(assets, new Vector3f(2.5f, 1.0f, -0.5f), new Vector3f(0, -1, 0), 0, 2f));
+		// front bottom right
+		/*	8	*/engines.add(new Engine(assets, new Vector3f(2.5f, -1.0f, 0.5f), new Vector3f(0, 1, 0), 0, 2f));
+		// front bottom left
+		/*	9	*/engines.add(new Engine(assets, new Vector3f(2.5f, -1.0f, -0.5f), new Vector3f(0, 1, 0), 0, 2f));
+		// back right top
+		/*	10	*/engines.add(new Engine(assets, new Vector3f(-2.5f, 0.5f, 1.0f), new Vector3f(0, 0, -1), 0, 2f));
+		// back right bottom
+		/*	11	*/engines.add(new Engine(assets, new Vector3f(-2.5f, -0.5f, 1.0f), new Vector3f(0, 0, -1), 0, 2f));
+		// back left top
+		/*	12	*/engines.add(new Engine(assets, new Vector3f(-2.5f, 0.5f, -1.0f), new Vector3f(0, 0, 1), 0, 2f));
+		// back left bottom
+		/*	13	*/engines.add(new Engine(assets, new Vector3f(-2.5f, -0.5f, -1.0f), new Vector3f(0, 0, 1), 0, 2f));
+		// back top right
+		/*	14	*/engines.add(new Engine(assets, new Vector3f(-2.5f, 1.0f, 0.5f), new Vector3f(0, -1, 0), 0, 2f));
+		// back top left
+		/*	15	*/engines.add(new Engine(assets, new Vector3f(-2.5f, 1.0f, -0.5f), new Vector3f(0, -1, 0), 0, 2f));
+		// back bottom right
+		/*	16	*/engines.add(new Engine(assets, new Vector3f(-2.5f, -1.0f, 0.5f), new Vector3f(0, 1, 0), 0, 2f));
+		// back bottom left
+		/*	17	*/engines.add(new Engine(assets, new Vector3f(-2.5f, -1.0f, -0.5f), new Vector3f(0, 1, 0), 0, 2f));
 
-		addEngineGroup(new EngineGroup(EngineGroup.ID_MAIN_DRIVE, this, 0, 1));
+		addEngineGroup(new EngineGroup(EngineGroup.ID_MAIN_DRIVE,	this, 0, 1));
+		
+		addEngineGroup(new EngineGroup(EngineGroup.ID_ROTATE_UP,	this, 8, 9, 14, 15));
+		addEngineGroup(new EngineGroup(EngineGroup.ID_ROTATE_DOWN,	this, 6, 7, 16, 17));
+		addEngineGroup(new EngineGroup(EngineGroup.ID_ROTATE_RIGHT,	this, 4, 5, 10, 11));
+		addEngineGroup(new EngineGroup(EngineGroup.ID_ROTATE_LEFT,	this, 2, 3, 12, 13));
+		
+		addEngineGroup(new EngineGroup(EngineGroup.ID_SPIN_RIGHT,	this, 6, 9, 14, 17));
+		addEngineGroup(new EngineGroup(EngineGroup.ID_SPIN_LEFT,	this, 7, 8, 15, 16));
+		
+		addEngineGroup(new EngineGroup(EngineGroup.ID_DRIFT_UP,		this, 8, 9, 16, 17));
+		addEngineGroup(new EngineGroup(EngineGroup.ID_DRIFT_DOWN,	this, 6, 7, 14, 15));
+		addEngineGroup(new EngineGroup(EngineGroup.ID_DRIFT_RIGHT,	this, 4, 5, 12, 13));
+		addEngineGroup(new EngineGroup(EngineGroup.ID_DRIFT_LEFT,	this, 2, 3, 10, 11));
 	}
 
 	@Override
