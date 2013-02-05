@@ -116,7 +116,10 @@ public class SimpleSpaceShip extends SimpleSpaceObject implements ISpaceShip {
 
 		@Override
 		public void setCurrentForce(float force) {
-			if (currentForce < 0 || currentForce > 1) {
+			if(force==currentForce){
+				return;
+			}
+			if (force < 0 || force > 1) {
 				throw new IllegalArgumentException("Force out of supported bounds");
 			}
 

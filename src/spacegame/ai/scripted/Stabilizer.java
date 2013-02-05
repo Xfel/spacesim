@@ -81,6 +81,9 @@ public class Stabilizer extends Autopilot {
 
 	public static float getAccel(float current, float dst, float speed) {
 		float desired = dst - current - speed;
+		
+		System.out.println(dst+", "+speed+" -> "+desired);
+		
 	
 		if (desired < -1) {
 			desired= -1;

@@ -37,7 +37,7 @@ public class DynamicAdjusterTest {
 				speed=-20;
 			}
 			
-			float accel = Stabilizer.getAccel(value, dst, speed);
+			float accel = Stabilizer.getAccel(0, dst-value, speed);
 			
 			accel*=MAX_ACCEL;
 
