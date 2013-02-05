@@ -295,29 +295,33 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener,
 			}
 		} else if (name.equals("rotateUp")) {
 			if (isPressed) {
-				sp.getEngineGroup(EngineGroup.ID_ROTATE_UP)
-						.setCurrentForce(1f);
+				sp.getEngineGroup(EngineGroup.ID_ROTATE_UP).setCurrentForce(1f);
 			} else {
-				sp.getEngineGroup(EngineGroup.ID_ROTATE_UP)
-						.setCurrentForce(0f);
+				sp.getEngineGroup(EngineGroup.ID_ROTATE_UP).setCurrentForce(0f);
 			}
 		} else if (name.equals("rotateDown")) {
 			if (isPressed) {
-				sp.getEngineGroup(EngineGroup.ID_ROTATE_DOWN).setCurrentForce(1f);
+				sp.getEngineGroup(EngineGroup.ID_ROTATE_DOWN).setCurrentForce(
+						1f);
 			} else {
-				sp.getEngineGroup(EngineGroup.ID_ROTATE_DOWN).setCurrentForce(0f);
+				sp.getEngineGroup(EngineGroup.ID_ROTATE_DOWN).setCurrentForce(
+						0f);
 			}
 		} else if (name.equals("rotateLeft")) {
 			if (isPressed) {
-				sp.getEngineGroup(EngineGroup.ID_ROTATE_LEFT).setCurrentForce(1f);
+				sp.getEngineGroup(EngineGroup.ID_ROTATE_LEFT).setCurrentForce(
+						1f);
 			} else {
-				sp.getEngineGroup(EngineGroup.ID_ROTATE_LEFT).setCurrentForce(0f);
+				sp.getEngineGroup(EngineGroup.ID_ROTATE_LEFT).setCurrentForce(
+						0f);
 			}
 		} else if (name.equals("rotateRight")) {
 			if (isPressed) {
-				sp.getEngineGroup(EngineGroup.ID_ROTATE_RIGHT).setCurrentForce(1f);
+				sp.getEngineGroup(EngineGroup.ID_ROTATE_RIGHT).setCurrentForce(
+						1f);
 			} else {
-				sp.getEngineGroup(EngineGroup.ID_ROTATE_RIGHT).setCurrentForce(0f);
+				sp.getEngineGroup(EngineGroup.ID_ROTATE_RIGHT).setCurrentForce(
+						0f);
 			}
 		} else if (name.equals("reset")) {
 			sp.getPhysics().setAngularVelocity(Vector3f.ZERO);
