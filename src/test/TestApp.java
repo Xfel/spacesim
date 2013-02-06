@@ -46,11 +46,11 @@ import com.jme3.scene.shape.Sphere;
 import com.jme3.system.AppSettings;
 import com.jme3.util.SkyFactory;
 
-public class TestApp extends SimpleApplication implements PhysicsTickListener,
-		ActionListener {
+public class TestApp extends SimpleApplication implements PhysicsTickListener, ActionListener {
 
 	public static void main(String[] args) {
 		Logger.getLogger("").setLevel(Level.WARNING);
+		Logger.getLogger("spacesim").setLevel(Level.INFO);
 
 		TestApp app = new TestApp();
 		// app.setShowSettings(false);
@@ -77,6 +77,7 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener,
 	private BitmapText headingText;
 	private boolean activateAP;
 	private Autopilot autopilot;
+	private BitmapText apText;
 
 	@Override
 	public void simpleInitApp() {
@@ -109,16 +110,13 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener,
 		createAsteroid(new Vector3f(10, 40, 0));
 		createAsteroid(new Vector3f(0, 0, 30));
 
-		inputManager.addListener(this, "autopilot", "reset", "drive",
-				"rotateUp", "rotateDown", "rotateLeft", "rotateRight");
+		inputManager.addListener(this, "autopilot", "reset", "drive", "rotateUp", "rotateDown", "rotateLeft",
+				"rotateRight");
 		inputManager.addMapping("drive", new KeyTrigger(Keyboard.KEY_SPACE));
 		inputManager.addMapping("rotateUp", new KeyTrigger(Keyboard.KEY_UP));
-		inputManager
-				.addMapping("rotateDown", new KeyTrigger(Keyboard.KEY_DOWN));
-		inputManager
-				.addMapping("rotateLeft", new KeyTrigger(Keyboard.KEY_LEFT));
-		inputManager.addMapping("rotateRight", new KeyTrigger(
-				Keyboard.KEY_RIGHT));
+		inputManager.addMapping("rotateDown", new KeyTrigger(Keyboard.KEY_DOWN));
+		inputManager.addMapping("rotateLeft", new KeyTrigger(Keyboard.KEY_LEFT));
+		inputManager.addMapping("rotateRight", new KeyTrigger(Keyboard.KEY_RIGHT));
 		inputManager.addMapping("reset", new KeyTrigger(Keyboard.KEY_RETURN));
 		inputManager.addMapping("autopilot", new KeyTrigger(Keyboard.KEY_P));
 
@@ -157,8 +155,7 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener,
 	}
 
 	private void createAsteroid(Vector3f vector3f) {
-		Spatial aster = assetManager
-				.loadModel("Models/Asteroids/rock_textured.blend");
+		Spatial aster = assetManager.loadModel("Models/Asteroids/rock_textured.blend");
 
 		// getChild to exclude blender's light and camera
 		SimpleSpaceObject astObj = new SimpleSpaceObject(aster, 40);
@@ -170,9 +167,8 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener,
 		physicsState.getPhysicsSpace().addTickListener(astObj);
 
 		astObj.getPhysics().setAngularVelocity(
-				new Vector3f(FastMath.nextRandomFloat() * 0.5f, FastMath
-						.nextRandomFloat() * 0.5f,
-						FastMath.nextRandomFloat() * 0.5f));
+				new Vector3f(FastMath.nextRandomFloat() * 0.5f, FastMath.nextRandomFloat() * 0.5f, FastMath
+						.nextRandomFloat() * 0.5f));
 	}
 
 	private void createHUD() {
@@ -182,17 +178,21 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener,
 		guiNode.attachChild(linVeloText);
 
 		angVeloText = new BitmapText(guiFont);
-		angVeloText.setLocalTranslation(0,
-				settings.getHeight() - linVeloText.getLineHeight(), 0);
+		angVeloText.setLocalTranslation(0, settings.getHeight() - linVeloText.getLineHeight(), 0);
 		angVeloText.setText("Angular Velocity:");
 		guiNode.attachChild(angVeloText);
 
 		headingText = new BitmapText(guiFont);
 		headingText.setLocalTranslation(0,
-				settings.getHeight() - linVeloText.getLineHeight()
-						- angVeloText.getLineHeight(), 0);
+				settings.getHeight() - linVeloText.getLineHeight() - angVeloText.getLineHeight(), 0);
 		headingText.setText("Heading:");
 		guiNode.attachChild(headingText);
+
+		apText = new BitmapText(guiFont);
+		apText.setLocalTranslation(0, settings.getHeight() - linVeloText.getLineHeight() - angVeloText.getLineHeight()
+				- headingText.getLineHeight(), 0);
+		apText.setText("Autopilot: off");
+		guiNode.attachChild(apText);
 	}
 
 	@Override
@@ -200,9 +200,8 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener,
 		super.simpleUpdate(tpf);
 
 		Vector3f linearVelocity = sp.getLinearVelocity();
-		linVeloText.setText(String.format(
-				"Linear Velocity: (%.2f, %.2f, %.2f)", linearVelocity.x,
-				linearVelocity.y, linearVelocity.z));
+		linVeloText.setText(String.format("Linear Velocity: (%.2f, %.2f, %.2f)", linearVelocity.x, linearVelocity.y,
+				linearVelocity.z));
 		float[] angles = sp.getAngularVelocity().toAngles(null);
 		// StringBuilder sb = new StringBuilder("(");
 		// for (int i = 0; i < angles.length; i++) {
@@ -212,13 +211,11 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener,
 		// sb.delete(sb.length() - 2, sb.length());
 		// sb.append(')');
 
-		angVeloText.setText(String.format(
-				"Angular Velocity: (%.2f, %.2f, %.2f)", angles[0], angles[1],
-				angles[2]));
+		angVeloText.setText(String.format("Angular Velocity: (%.2f, %.2f, %.2f)", angles[0] * FastMath.RAD_TO_DEG,
+				angles[1] * FastMath.RAD_TO_DEG, angles[2] * FastMath.RAD_TO_DEG));
 
 		Vector3f heading = sp.getRotation().mult(Vector3f.UNIT_X);
-		headingText.setText(String.format("Heading: (%.2f, %.2f, %.2f)",
-				heading.x, heading.y, heading.z));
+		headingText.setText(String.format("Heading: (%.2f, %.2f, %.2f)", heading.x, heading.y, heading.z));
 
 		if (activateAP) {
 			autopilot.update();
@@ -287,11 +284,9 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener,
 	public void onAction(String name, boolean isPressed, float tpf) {
 		if (name.equals("drive")) {
 			if (isPressed) {
-				sp.getEngineGroup(EngineGroup.ID_MAIN_DRIVE)
-						.setCurrentForce(1f);
+				sp.getEngineGroup(EngineGroup.ID_MAIN_DRIVE).setCurrentForce(1f);
 			} else {
-				sp.getEngineGroup(EngineGroup.ID_MAIN_DRIVE)
-						.setCurrentForce(0f);
+				sp.getEngineGroup(EngineGroup.ID_MAIN_DRIVE).setCurrentForce(0f);
 			}
 		} else if (name.equals("rotateUp")) {
 			if (isPressed) {
@@ -301,27 +296,21 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener,
 			}
 		} else if (name.equals("rotateDown")) {
 			if (isPressed) {
-				sp.getEngineGroup(EngineGroup.ID_ROTATE_DOWN).setCurrentForce(
-						1f);
+				sp.getEngineGroup(EngineGroup.ID_ROTATE_DOWN).setCurrentForce(1f);
 			} else {
-				sp.getEngineGroup(EngineGroup.ID_ROTATE_DOWN).setCurrentForce(
-						0f);
+				sp.getEngineGroup(EngineGroup.ID_ROTATE_DOWN).setCurrentForce(0f);
 			}
 		} else if (name.equals("rotateLeft")) {
 			if (isPressed) {
-				sp.getEngineGroup(EngineGroup.ID_ROTATE_LEFT).setCurrentForce(
-						1f);
+				sp.getEngineGroup(EngineGroup.ID_ROTATE_LEFT).setCurrentForce(1f);
 			} else {
-				sp.getEngineGroup(EngineGroup.ID_ROTATE_LEFT).setCurrentForce(
-						0f);
+				sp.getEngineGroup(EngineGroup.ID_ROTATE_LEFT).setCurrentForce(0f);
 			}
 		} else if (name.equals("rotateRight")) {
 			if (isPressed) {
-				sp.getEngineGroup(EngineGroup.ID_ROTATE_RIGHT).setCurrentForce(
-						1f);
+				sp.getEngineGroup(EngineGroup.ID_ROTATE_RIGHT).setCurrentForce(1f);
 			} else {
-				sp.getEngineGroup(EngineGroup.ID_ROTATE_RIGHT).setCurrentForce(
-						0f);
+				sp.getEngineGroup(EngineGroup.ID_ROTATE_RIGHT).setCurrentForce(0f);
 			}
 		} else if (name.equals("reset")) {
 			sp.getPhysics().setAngularVelocity(Vector3f.ZERO);
@@ -333,16 +322,39 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener,
 			if (isPressed) {
 				activateAP = !activateAP;
 				if (activateAP) {
-					String input = JOptionPane
-							.showInputDialog("Enter tatget vector or cancel for stabilize");
+					String input = JOptionPane.showInputDialog("Enter target vector or cancel for stabilize");
 					if (input != null) {
-						autopilot.queueTask(new Vector3f(0, 1, 0), null);
-					} else {
-						autopilot.clearTask();
+						String[] str = input.split(",");
+						
+						if(str.length!=3){
+							JOptionPane.showMessageDialog(null, "You have to enter three vector components.", "Invalid input",
+									JOptionPane.ERROR_MESSAGE);
+							activateAP = false;
+							return;
+						}
+						
+						float x, y, z;
+
+						try {
+							x = Float.parseFloat(str[0]);
+							y = Float.parseFloat(str[1]);
+							z = Float.parseFloat(str[2]);
+						} catch (NumberFormatException e) {
+							JOptionPane.showMessageDialog(null, "Invalid number: " + e.getMessage(), "Invalid input",
+									JOptionPane.ERROR_MESSAGE);
+							activateAP = false;
+							return;
+						}
+						autopilot.queueTask(new Vector3f(x, y, z), Vector3f.ZERO);
+						autopilot.queueTask(Vector3f.UNIT_X, Vector3f.ZERO);
 					}
+					apText.setText("Autopilot: on");
 				} else {
+					autopilot.clearTask();
 					sp.stopAllEngines();
+					apText.setText("Autopilot: off");
 				}
+
 			}
 		}
 	}

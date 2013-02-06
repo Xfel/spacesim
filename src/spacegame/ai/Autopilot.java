@@ -2,6 +2,10 @@ package spacegame.ai;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.jme3.math.Vector3f;
 
@@ -10,12 +14,14 @@ import spacegame.model.ISpaceShip;
 
 public abstract class Autopilot implements IShipComponent {
 
+	private static final Logger log=Logger.getLogger(Autopilot.class.getName());
+	
 	private ISpaceShip ship;
 
 	private Queue<IWaypoint> waypoints;
 
 	protected Autopilot() {
-		waypoints = new LinkedList<IWaypoint>();
+		waypoints = new LinkedBlockingQueue<IWaypoint>();
 	}
 
 	/*
@@ -79,6 +85,7 @@ public abstract class Autopilot implements IShipComponent {
 	}
 	
 	protected void waypointReached(){
-		waypoints.poll();
+		IWaypoint wp=waypoints.poll();
+		log.log(Level.INFO, "Waypoint reached: {0}", wp);
 	}
 }

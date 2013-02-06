@@ -17,7 +17,17 @@ public class StaticAbsoluteWaypoint implements IWaypoint {
 
 	public StaticAbsoluteWaypoint(Vector3f position, Vector3f heading) {
 		this.position = new Vector3f(position);
-		this.heading = new Vector3f(heading);
+		this.heading = new Vector3f(heading).normalizeLocal();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return String.format("StaticAbsoluteWaypoint [position=%s, heading=%s]", position, heading);
 	}
 
 	@Override

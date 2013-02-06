@@ -22,6 +22,18 @@ public class Rotator extends Autopilot {
 
 		if (wp != null) {
 			float[] dsts = wp.getRelativeRotation(ship).toAngles(null);
+			
+			boolean finished = true;
+			for (int i = 0; i < dsts.length; i++) {
+				if (FastMath.abs(dsts[i]) > FastMath.ZERO_TOLERANCE || FastMath.abs(angles[i]) > FastMath.FLT_EPSILON) {
+					finished = false;
+					break;
+				}
+			}
+			if (finished) {
+				waypointReached();
+				ship.stopAllEngines();
+			}
 
 			Stabilizer.setEngineRotation(-Stabilizer.getAccel(0, dsts[0], angles[0]),
 					getShip().getEngineGroup(EngineGroup.ID_SPIN_RIGHT),
@@ -32,6 +44,8 @@ public class Rotator extends Autopilot {
 			Stabilizer.setEngineRotation(-Stabilizer.getAccel(0, dsts[2], angles[2]),
 					getShip().getEngineGroup(EngineGroup.ID_ROTATE_DOWN),
 					getShip().getEngineGroup(EngineGroup.ID_ROTATE_UP));
+
+			
 		} else {
 
 			Stabilizer.adjust(angles[0], getShip().getEngineGroup(EngineGroup.ID_SPIN_RIGHT),
