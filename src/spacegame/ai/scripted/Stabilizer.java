@@ -37,17 +37,7 @@ public class Stabilizer extends Autopilot {
 		}
 	}
 
-	@Override
-	public void queueTask(Vector3f desiredHeading, Vector3f desiredPosition) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void clearTask() {
-		// TODO Auto-generated method stub
-
-	}
+	
 
 	public static void setEngineRotation(float angularVelo, EngineGroup rightDown, EngineGroup leftUp) {
 		if (angularVelo > FastMath.ZERO_TOLERANCE) {
