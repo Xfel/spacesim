@@ -7,7 +7,11 @@ public class DynamicAdjuster {
 	private float halfWay;
 	private boolean accel, decel;
 	private boolean reset;
-	
+
+	private float lastAccel, lastSpeed;
+
+	private float computedAccelerationFactor;
+
 	public DynamicAdjuster() {
 		reset();
 	}
@@ -20,6 +24,24 @@ public class DynamicAdjuster {
 	}
 
 	public float getAcceleration(float distance, float speed) {
+		computedAccelerationFactor = FastMath.abs((lastSpeed - speed) / lastAccel);
+//		System.out.println(computedAccelerationFactor);
+
+		float accel = doGetAcceleration(distance, speed);
+
+		lastAccel = accel;
+		lastSpeed = speed;
+		return accel;
+	}
+
+	protected float doGetAcceleration(float distance, float speed) {
+//		if (computedAccelerationFactor != 0 && FastMath.abs(speed) > FastMath.ZERO_TOLERANCE) {
+//			float slowdownDist = FastMath.sqr(speed) / (2 * computedAccelerationFactor);
+//			System.out.println("Sdd: " + slowdownDist + " Dist: " + distance);
+//			if (FastMath.abs(distance - slowdownDist) < FastMath.ZERO_TOLERANCE) {
+//				return -FastMath.sign(speed);
+//			}
+//		}
 
 		if (reset
 				|| (FastMath.abs(speed) <= FastMath.ZERO_TOLERANCE && FastMath.abs(distance) > FastMath.ZERO_TOLERANCE)) {
@@ -68,12 +90,12 @@ public class DynamicAdjuster {
 
 		return desired;
 	}
-	
-	private boolean hwHit(float distance){
-		if(halfWay<0){
-			return distance>halfWay;
-		}else{
-			return distance<halfWay;
+
+	private boolean hwHit(float distance) {
+		if (halfWay < 0) {
+			return distance > halfWay;
+		} else {
+			return distance < halfWay;
 		}
 	}
 }

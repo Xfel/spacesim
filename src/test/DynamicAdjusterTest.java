@@ -18,7 +18,7 @@ public class DynamicAdjusterTest {
 
 		float value = 0;
 
-		float speed = 20;
+		float speed = 0;
 
 //		float dst = (float) (Math.random()*2000);
 		float dst = 200;
@@ -36,9 +36,9 @@ public class DynamicAdjusterTest {
 			}
 			tc++;
 			
-			if(tc==75){
-				speed=-20;
-			}
+//			if(tc==75){
+//				speed=-20;
+//			}
 			
 			float accel = adjuster.getAcceleration(dst-value, speed);
 			

@@ -11,6 +11,10 @@ import spacegame.model.ISpaceShip;
 
 public class Rotator extends Autopilot {
 
+	private DynamicAdjuster adjustAngleX=new DynamicAdjuster();
+	private DynamicAdjuster adjustAngleY=new DynamicAdjuster();
+	private DynamicAdjuster adjustAngleZ=new DynamicAdjuster();
+	
 	@Override
 	public void update() {
 		IWaypoint wp = getNextWaypoint();
@@ -18,14 +22,14 @@ public class Rotator extends Autopilot {
 		ISpaceShip ship = getShip();
 		Quaternion angv = ship.getAngularVelocity();
 
-		float[] angles = angv.toAngles(null);
+		float[] speed = angv.toAngles(null);
 
 		if (wp != null) {
 			float[] dsts = wp.getRelativeRotation(ship).toAngles(null);
 			
 			boolean finished = true;
 			for (int i = 0; i < dsts.length; i++) {
-				if (FastMath.abs(dsts[i]) > FastMath.ZERO_TOLERANCE || FastMath.abs(angles[i]) > FastMath.FLT_EPSILON) {
+				if (FastMath.abs(dsts[i]) > FastMath.ZERO_TOLERANCE || FastMath.abs(speed[i]) > FastMath.FLT_EPSILON) {
 					finished = false;
 					break;
 				}
@@ -35,26 +39,44 @@ public class Rotator extends Autopilot {
 				ship.stopAllEngines();
 			}
 
-			Stabilizer.setEngineRotation(-Stabilizer.getAccel(0, dsts[0], angles[0]),
+			Stabilizer.setEngineRotation(-adjustAngleX.getAcceleration(dsts[0], speed[0]),
 					getShip().getEngineGroup(EngineGroup.ID_SPIN_RIGHT),
 					getShip().getEngineGroup(EngineGroup.ID_SPIN_LEFT));
-			Stabilizer.setEngineRotation(-Stabilizer.getAccel(0, dsts[1], angles[1]),
+			Stabilizer.setEngineRotation(-adjustAngleY.getAcceleration( dsts[1], speed[1]),
 					getShip().getEngineGroup(EngineGroup.ID_ROTATE_RIGHT),
 					getShip().getEngineGroup(EngineGroup.ID_ROTATE_LEFT));
-			Stabilizer.setEngineRotation(-Stabilizer.getAccel(0, dsts[2], angles[2]),
+			Stabilizer.setEngineRotation(-adjustAngleZ.getAcceleration( dsts[2], speed[2]),
 					getShip().getEngineGroup(EngineGroup.ID_ROTATE_DOWN),
 					getShip().getEngineGroup(EngineGroup.ID_ROTATE_UP));
 
 			
 		} else {
 
-			Stabilizer.adjust(angles[0], getShip().getEngineGroup(EngineGroup.ID_SPIN_RIGHT),
+			Stabilizer.adjust(speed[0], getShip().getEngineGroup(EngineGroup.ID_SPIN_RIGHT),
 					getShip().getEngineGroup(EngineGroup.ID_SPIN_LEFT));
-			Stabilizer.adjust(angles[1], getShip().getEngineGroup(EngineGroup.ID_ROTATE_RIGHT), getShip()
+			Stabilizer.adjust(speed[1], getShip().getEngineGroup(EngineGroup.ID_ROTATE_RIGHT), getShip()
 					.getEngineGroup(EngineGroup.ID_ROTATE_LEFT));
-			Stabilizer.adjust(angles[2], getShip().getEngineGroup(EngineGroup.ID_ROTATE_DOWN), getShip()
+			Stabilizer.adjust(speed[2], getShip().getEngineGroup(EngineGroup.ID_ROTATE_DOWN), getShip()
 					.getEngineGroup(EngineGroup.ID_ROTATE_UP));
 		}
 	}
+	
+	@Override
+	protected void waypointReached() {
+		super.waypointReached();
+		
+		adjustAngleX.reset();
+		adjustAngleY.reset();
+		adjustAngleZ.reset();
+	}
 
+	@Override
+	public void clearTask() {
+		super.clearTask();
+
+		
+		adjustAngleX.reset();
+		adjustAngleY.reset();
+		adjustAngleZ.reset();
+	}
 }
