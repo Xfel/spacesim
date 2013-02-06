@@ -86,6 +86,7 @@ public abstract class Autopilot implements IShipComponent {
 	
 	protected void waypointReached(){
 		IWaypoint wp=waypoints.poll();
+		System.out.println("Waypoint reached: "+wp);
 		log.log(Level.INFO, "Waypoint reached: {0}", wp);
 	}
 }

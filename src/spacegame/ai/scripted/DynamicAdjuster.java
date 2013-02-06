@@ -29,6 +29,12 @@ public class DynamicAdjuster {
 
 		float accel = doGetAcceleration(distance, speed);
 
+		if (accel < -1) {
+			accel = -1;
+		} else if (accel > 1) {
+			accel = 1;
+		}
+
 		lastAccel = accel;
 		lastSpeed = speed;
 		return accel;
@@ -44,25 +50,29 @@ public class DynamicAdjuster {
 //		}
 
 		if (reset
-				|| (FastMath.abs(speed) <= FastMath.ZERO_TOLERANCE && FastMath.abs(distance) > FastMath.ZERO_TOLERANCE)) {
+				|| (FastMath.abs(speed) <= FastMath.ZERO_TOLERANCE && FastMath.abs(distance) > 0.1)) {
 			halfWay = distance / 2;
 
 			accel = true;
-			System.out.println("Start - Distance: "+distance+" HW:"+halfWay);
-			
-			reset=false;
+			System.out.println("Start - Distance: " + distance + " HW:" + halfWay);
+
+			reset = false;
+			return halfWay;
 		} else if (accel) {
 //			System.out.println(distance + ", " + halfWay);
 			if (hwHit(distance)) {
-				System.out.println("Hit HW at: "+distance);
+				System.out.println("Hit HW at: " + distance);
 				accel = false;
 				decel = true;
-				return -FastMath.sign(halfWay);
+				if (FastMath.abs(speed*computedAccelerationFactor) < 1 && FastMath.abs(speed*computedAccelerationFactor) > 0) {
+					return -speed*computedAccelerationFactor;
+				}
+				return -halfWay;
 			}
-			return FastMath.sign(halfWay);
+			return halfWay;
 		} else if (decel) {
 //			System.out.println("SH:" + speed + "," + halfWay);
-			if (FastMath.abs(distance) <= 4 && FastMath.abs(speed) <= FastMath.FLT_EPSILON) {
+			if (FastMath.abs(distance) <= FastMath.ZERO_TOLERANCE && FastMath.abs(speed) <= FastMath.FLT_EPSILON) {
 				decel = false;
 			} else if (FastMath.sign(halfWay) != FastMath.sign(speed)) {
 				// went too far
@@ -70,25 +80,18 @@ public class DynamicAdjuster {
 				halfWay = distance / 2;
 
 				accel = true;
-				System.out.println("Change direction Distance: "+distance+" - HW:"+halfWay);
-				return FastMath.sign(halfWay);
+				System.out.println("Change direction Distance: " + distance + " - HW:" + halfWay);
+				return halfWay;
 			} else {
-				return -FastMath.sign(halfWay);
+				if (FastMath.abs(speed*computedAccelerationFactor) < 1 && FastMath.abs(speed*computedAccelerationFactor) > 0) {
+					return -speed*computedAccelerationFactor;
+				}
+				return -halfWay;
 			}
 		}
 
 		// is more effective in area <1
-		float desired = distance - speed;
-
-		// System.out.println(dst+", "+speed+" -> "+desired);
-
-		if (desired < -1) {
-			desired = -1;
-		} else if (desired > 1) {
-			desired = 1;
-		}
-
-		return desired;
+		return distance - speed;
 	}
 
 	private boolean hwHit(float distance) {
