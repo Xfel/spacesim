@@ -3,6 +3,7 @@ package test;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
+import spacegame.ai.scripted.DynamicAdjuster;
 import spacegame.ai.scripted.Stabilizer;
 
 import com.jme3.math.FastMath;
@@ -17,7 +18,7 @@ public class DynamicAdjusterTest {
 
 		float value = 0;
 
-		float speed = 0;
+		float speed = 20;
 
 //		float dst = (float) (Math.random()*2000);
 		float dst = 200;
@@ -27,21 +28,23 @@ public class DynamicAdjusterTest {
 
 		int tc=0;
 		
-		while (true) {
+		DynamicAdjuster adjuster=new DynamicAdjuster();
+		
+		while (tc<300) {
 			if (FastMath.abs(speed) < FastMath.ZERO_TOLERANCE && FastMath.abs(value - dst) < FastMath.ZERO_TOLERANCE) {
 				break;
 			}
 			tc++;
 			
-			if(tc==20){
+			if(tc==75){
 				speed=-20;
 			}
 			
-			float accel = Stabilizer.getAccel(0, dst-value, speed);
+			float accel = adjuster.getAcceleration(dst-value, speed);
 			
 			accel*=MAX_ACCEL;
 
-			System.out.printf("% 3.3f; % 3.3f; % 3.3f%n", value, speed, accel);
+//			System.out.printf("% 3.3f; % 3.3f; % 3.3f%n", value, speed, accel);
 			ps.printf("% 3.3f; % 3.3f; % 3.3f%n", value, speed, accel);
 
 //			Thread.sleep(100);
