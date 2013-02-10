@@ -2,9 +2,8 @@ package spacegame.model.modules;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Spatial;
 
-import spacegame.model.EngineNode;
-import spacegame.model.ModuleNode;
 import spacegame.model.structure.Module;
 
 public class EngineModule extends Module{
@@ -59,8 +58,8 @@ public class EngineModule extends Module{
 	}
 	
 	@Override
-	public ModuleNode createNode(AssetManager assets) {
-		return new EngineNode(this, assets);
+	public Spatial createSpatial(AssetManager assets) {
+		return null;
 	}
 	
 }

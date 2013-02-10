@@ -2,7 +2,9 @@ package spacegame.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 public class EngineGroup {
@@ -22,9 +24,26 @@ public class EngineGroup {
 	public static final String ID_DRIFT_UP="drift.up";
 	public static final String ID_DRIFT_DOWN="drift.down";
 	
+	public static EngineGroup join(EngineGroup g1, EngineGroup g2){
+		if(! g1.id.equals(g2.id)){
+			throw new IllegalArgumentException("engine groups to join must have the same id.");
+		}
+		
+		HashSet<IShipEngine> engines=new HashSet<IShipEngine>();
+		engines.addAll(g1.engines);
+		engines.addAll(g2.engines);
+		
+		return new EngineGroup(g1.getId(), engines);
+	}
+	
 	private String id;
 
 	private List<IShipEngine> engines;
+	
+	public EngineGroup(String id, Collection<IShipEngine> engines) {
+		this.id = id;
+		this.engines=new ArrayList<IShipEngine>(engines);
+	}
 	
 	public EngineGroup(String id, IShipEngine...engines) {
 		this.id = id;

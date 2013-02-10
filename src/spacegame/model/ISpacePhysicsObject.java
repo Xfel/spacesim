@@ -3,7 +3,7 @@ package spacegame.model;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 
-public interface ISpaceObject {
+public interface ISpacePhysicsObject {
 
 	float getMass();
 

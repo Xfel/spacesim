@@ -1,6 +1,8 @@
 package spacegame.model;
 
-public interface IDamageable {
+import com.jme3.scene.control.Control;
+
+public interface IDamageable extends Control{
 	
 	float getIntegrity();
 	

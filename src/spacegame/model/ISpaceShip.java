@@ -3,7 +3,7 @@ package spacegame.model;
 import java.util.List;
 
 
-public interface ISpaceShip extends ISpaceObject {
+public interface ISpaceShip extends ISpacePhysicsObject {
 	
 	
 	List<? extends IShipEngine> getEngines();

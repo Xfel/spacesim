@@ -1,6 +1,6 @@
 package test;
 
-import spacegame.model.ISpaceObject;
+import spacegame.model.ISpacePhysicsObject;
 import spacegame.model.ISpaceShip;
 
 import com.jme3.bullet.PhysicsSpace;
@@ -15,7 +15,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
-public class SimpleSpaceObject implements ISpaceObject, PhysicsTickListener, PhysicsCollisionListener {
+public class SimpleSpaceObject implements ISpacePhysicsObject, PhysicsTickListener, PhysicsCollisionListener {
 
 	protected Node node;
 	protected RigidBodyControl physics;
@@ -103,14 +103,14 @@ public class SimpleSpaceObject implements ISpaceObject, PhysicsTickListener, Phy
 
 	@Override
 	public void collision(PhysicsCollisionEvent evt) {
-		if (evt.getObjectA() == physics && evt.getObjectB().getUserObject() instanceof ISpaceObject) {
-			onCollision((ISpaceObject) evt.getObjectB().getUserObject(), evt);
-		} else if (evt.getObjectB() == physics && evt.getObjectA().getUserObject() instanceof ISpaceObject) {
-			onCollision((ISpaceObject) evt.getObjectA().getUserObject(), evt);
+		if (evt.getObjectA() == physics && evt.getObjectB().getUserObject() instanceof ISpacePhysicsObject) {
+			onCollision((ISpacePhysicsObject) evt.getObjectB().getUserObject(), evt);
+		} else if (evt.getObjectB() == physics && evt.getObjectA().getUserObject() instanceof ISpacePhysicsObject) {
+			onCollision((ISpacePhysicsObject) evt.getObjectA().getUserObject(), evt);
 		}
 	}
 
-	protected void onCollision(ISpaceObject object, PhysicsCollisionEvent evt) {
+	protected void onCollision(ISpacePhysicsObject object, PhysicsCollisionEvent evt) {
 		// TODO Auto-generated method stub
 
 	}

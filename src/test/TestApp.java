@@ -27,6 +27,7 @@ import com.jme3.effect.ParticleEmitter;
 import com.jme3.effect.ParticleMesh;
 import com.jme3.effect.influencers.DefaultParticleInfluencer;
 import com.jme3.font.BitmapText;
+import com.jme3.input.ChaseCamera;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
@@ -42,6 +43,8 @@ import com.jme3.scene.SceneGraphVisitor;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.Spatial.CullHint;
+import com.jme3.scene.control.CameraControl;
+import com.jme3.scene.control.CameraControl.ControlDirection;
 import com.jme3.scene.shape.Sphere;
 import com.jme3.system.AppSettings;
 import com.jme3.util.SkyFactory;
@@ -78,6 +81,7 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 	private boolean activateAP;
 	private Autopilot autopilot;
 	private BitmapText apText;
+	private ChaseCamera followCam;
 
 	@Override
 	public void simpleInitApp() {
@@ -90,12 +94,11 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 
 		// viewPort.setBackgroundColor(ColorRGBA.Blue);
 
-		cam.setLocation(new Vector3f(0, 8f, 12f));
-		cam.lookAt(new Vector3f(2, 2, 0), Vector3f.UNIT_Y);
-
 		flyCam.setEnabled(true);
 		flyCam.setDragToRotate(true);
 		flyCam.setMoveSpeed(10f);
+		
+		
 
 		// createShip();
 
@@ -106,18 +109,30 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 		physicsState.getPhysicsSpace().add(physics = sp.getPhysics());
 		physicsState.getPhysicsSpace().addTickListener(sp);
 
+//		sp.getNode().addControl(followCam);
+		
+		followCam=new ChaseCamera(cam, sp.getNode(), inputManager);
+//		followCam=new CameraControl(cam, ControlDirection.SpatialToCamera);
+		followCam.setEnabled(false);
+//		followCam.set
+//		followCam.set
+
+		cam.setLocation(new Vector3f(0, 8f, 12f));
+		cam.lookAt(new Vector3f(2, 2, 0), Vector3f.UNIT_Y);
+		
 		createAsteroid(new Vector3f(20, 0, 0));
 		createAsteroid(new Vector3f(10, 40, 0));
 		createAsteroid(new Vector3f(0, 0, 30));
 
 		inputManager.addListener(this, "autopilot", "reset", "drive", "rotateUp", "rotateDown", "rotateLeft",
-				"rotateRight");
+				"rotateRight", "cam");
 		inputManager.addMapping("drive", new KeyTrigger(Keyboard.KEY_SPACE));
 		inputManager.addMapping("rotateUp", new KeyTrigger(Keyboard.KEY_UP));
 		inputManager.addMapping("rotateDown", new KeyTrigger(Keyboard.KEY_DOWN));
 		inputManager.addMapping("rotateLeft", new KeyTrigger(Keyboard.KEY_LEFT));
 		inputManager.addMapping("rotateRight", new KeyTrigger(Keyboard.KEY_RIGHT));
-		inputManager.addMapping("reset", new KeyTrigger(Keyboard.KEY_RETURN));
+		inputManager.addMapping("reset", new KeyTrigger(Keyboard.KEY_X));
+		inputManager.addMapping("cam", new KeyTrigger(Keyboard.KEY_C));
 		inputManager.addMapping("autopilot", new KeyTrigger(Keyboard.KEY_P));
 
 		final ScreenshotAppState state = new ScreenshotAppState();
@@ -160,7 +175,7 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 		// getChild to exclude blender's light and camera
 		SimpleSpaceObject astObj = new SimpleSpaceObject(aster, 40);
 
-		rootNode.attachChild(astObj.getNode());
+		sp.getNode().attachChild(astObj.getNode());
 		astObj.getPhysics().setPhysicsLocation(vector3f);
 
 		physicsState.getPhysicsSpace().add(astObj.getPhysics());
@@ -356,6 +371,12 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 				}
 
 			}
+		}else if(name.equals("cam")&&isPressed){
+			
+			boolean enable=flyCam.isEnabled();
+			
+			followCam.setEnabled(enable);
+			flyCam.setEnabled(!enable);
 		}
 	}
 

@@ -48,11 +48,12 @@ public abstract class DamageableEvent extends ModelEvent {
 
 	}
 	
+	
 	public static final class Death extends DamageableEvent {
 
 		private static final long serialVersionUID = -5160547751914780241L;
 
-		protected Death(IDamageable source) {
+		public Death(IDamageable source) {
 			super(source);
 		}
 

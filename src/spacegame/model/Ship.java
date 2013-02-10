@@ -1,76 +1,120 @@
 package spacegame.model;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import spacegame.model.structure.Module;
 import spacegame.model.structure.ModuleSocket;
 import spacegame.model.structure.ShipFrame;
+import spacegame.model.structure.Structure;
 import spacegame.util.StringUtils;
 
+import com.jme3.asset.AssetKey;
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.RenderManager;
+import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.control.AbstractControl;
+import com.jme3.scene.control.Control;
 
-public class Ship extends Node {
+public class Ship extends StructureControl {
 
 	private ShipFrame frame;
-	private RigidBodyControl physics;
 	
-	private CompoundCollisionShape outline;
+	private Map<ModuleSocket, Module> modules;
+//	private RigidBodyControl physics;
+//	
+//	private CompoundCollisionShape outline;
+//
+//	public Ship(ShipFrame frame, AssetManager assets) {
+//		this.frame = frame;
+//
+//		if (!StringUtils.isBlank(frame.getModelName())) {
+//			attachChild(assets.loadModel(frame.getModelName()));
+//		}
+//		
+//		physics=new RigidBodyControl(frame.getMass());
+//		addControl(physics);
+//		
+//		outline=new CompoundCollisionShape();
+//		physics.setCollisionShape(outline);
+//		
+//		outline.addChildShape(frame.getOutline(), Vector3f.ZERO);
+//	}
+//
+//	public ShipFrame getFrame() {
+//		return frame;
+//	}
+//
+//	public void mount(ModuleSocket socket, ModuleNode node) {
+//		attachChild(node);
+//		node.setMount(this, socket);
+//		
+//		physics.setMass(physics.getMass()+node.getModule().getMass());
+//		
+//		CollisionShape childOutline=node.getModule().getOutline();
+//		
+//		Matrix3f childTransform=new Matrix3f();
+//		node.getLocalRotation().toRotationMatrix(childTransform);
+//		childTransform.scale(node.getLocalScale());
+//		outline.addChildShape(childOutline, node.getLocalTranslation(), childTransform);
+//	}
+//
+//	public void dismount(ModuleSocket socket) {
+//		for (int i = 0; i < getQuantity(); i++) {
+//			Spatial child = getChild(i);
+//			if ((child instanceof ModuleNode) && ((ModuleNode) child).getMountPoint() == socket) {
+//				detachChildAt(i);
+//				((ModuleNode) child).setMount(null, null);
+//				Module module = ((ModuleNode) child).getModule();
+//				physics.setMass(physics.getMass()+module.getMass());
+//				outline.removeChildShape(module.getOutline());
+//				break;
+//			}
+//		}
+//	}
+//	
+//	public RigidBodyControl getPhysics() {
+//		return physics;
+//	}
 
-	public Ship(ShipFrame frame, AssetManager assets) {
+
+	public Ship(ShipFrame frame) {
+		super(frame);
 		this.frame = frame;
-
-		if (!StringUtils.isBlank(frame.getModelName())) {
-			attachChild(assets.loadModel(frame.getModelName()));
-		}
-		
-		physics=new RigidBodyControl(frame.getMass());
-		addControl(physics);
-		
-		outline=new CompoundCollisionShape();
-		physics.setCollisionShape(outline);
-		
-		outline.addChildShape(frame.getOutline(), Vector3f.ZERO);
+		modules=new HashMap<ModuleSocket, Module>();
+	}
+	
+	public Ship(String resource, AssetManager assets) {
+		// TODO add loader...
+		this(assets.loadAsset(new AssetKey<ShipFrame>(resource)));
 	}
 
-	public ShipFrame getFrame() {
+	@Override
+	public Control cloneForSpatial(Spatial spatial) {
+		Ship otherShip=new Ship(frame);
+		
+		otherShip.setSpatial(spatial);
+		return otherShip;
+	}
+	
+	
+	
+	@Override
+	public ShipFrame getStructure() {
 		return frame;
 	}
 
-	public void mount(ModuleSocket socket, ModuleNode node) {
-		attachChild(node);
-		node.setMount(this, socket);
-		
-		physics.setMass(physics.getMass()+node.getModule().getMass());
-		
-		CollisionShape childOutline=node.getModule().getOutline();
-		
-		Matrix3f childTransform=new Matrix3f();
-		node.getLocalRotation().toRotationMatrix(childTransform);
-		childTransform.scale(node.getLocalScale());
-		outline.addChildShape(childOutline, node.getLocalTranslation(), childTransform);
-	}
-
-	public void dismount(ModuleSocket socket) {
-		for (int i = 0; i < getQuantity(); i++) {
-			Spatial child = getChild(i);
-			if ((child instanceof ModuleNode) && ((ModuleNode) child).getMountPoint() == socket) {
-				detachChildAt(i);
-				((ModuleNode) child).setMount(null, null);
-				Module module = ((ModuleNode) child).getModule();
-				physics.setMass(physics.getMass()+module.getMass());
-				outline.removeChildShape(module.getOutline());
-				break;
-			}
-		}
-	}
 	
-	public RigidBodyControl getPhysics() {
-		return physics;
-	}
+	
 
 }

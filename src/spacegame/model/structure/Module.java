@@ -1,8 +1,6 @@
 package spacegame.model.structure;
 
-import com.jme3.asset.AssetManager;
 
-import spacegame.model.ModuleNode;
 
 public abstract class Module extends Structure{
 	
@@ -37,8 +35,6 @@ public abstract class Module extends Structure{
 	public void setTier(ModuleTier tier) {
 		this.tier = tier;
 	}
-
-	public abstract ModuleNode createNode(AssetManager assets);
 	
 	
 	
