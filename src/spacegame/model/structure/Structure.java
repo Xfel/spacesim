@@ -2,6 +2,9 @@ package spacegame.model.structure;
 
 import java.io.IOException;
 
+import spacegame.model.StructureControl;
+import spacegame.model.control.IntegrityControl;
+
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
@@ -111,7 +114,8 @@ public class Structure implements Savable {
 	public Spatial createSpatial(AssetManager assets){
 		Spatial model=assets.loadModel(modelName);
 		
-		model.addControl(new RigidBodyControl(mass));
+		model.addControl(new StructureControl(this));
+		model.addControl(new IntegrityControl(structuralIntegrity));
 		
 		return model;
 	}

@@ -22,12 +22,10 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
 import com.jme3.scene.control.Control;
 
-public class StructureControl extends AbstractControl implements PhysicsControl, IDamageable, ISpacePhysicsObject,
+public class StructureControl extends AbstractControl implements PhysicsControl, ISpacePhysicsObject,
 		PhysicsTickListener {
 
 	private Structure structure;
-
-	private float integrity;
 
 	private RigidBodyControl physics;
 
@@ -42,31 +40,14 @@ public class StructureControl extends AbstractControl implements PhysicsControl,
 	public StructureControl(Structure structure) {
 		this.physics = new RigidBodyControl(structure.getMass());
 		this.structure = structure;
-		// init to max health
-		this.integrity = structure.getStructuralIntegrity();
 	}
 
 	@Override
 	public Control cloneForSpatial(Spatial spatial) {
 		StructureControl ctrl = new StructureControl(structure);
 
-		ctrl.integrity = integrity;
-
 		ctrl.setSpatial(spatial);
 		return ctrl;
-	}
-
-	protected void onDeath() {
-		
-		EventBus.publish(spatial.getName(), new DamageableEvent.Death(this));
-
-		if (spatial != null) {
-			spatial.removeFromParent();
-			getPhysicsSpace().removeAll(spatial);
-		} else {
-			getPhysicsSpace().remove(this);
-		}
-
 	}
 
 	public Structure getStructure() {
@@ -77,45 +58,7 @@ public class StructureControl extends AbstractControl implements PhysicsControl,
 		return physics;
 	}
 
-	@Override
-	public float getIntegrity() {
-		return integrity;
-	}
-
-	@Override
-	public float getMaximumIntegrity() {
-		return structure.getStructuralIntegrity();
-	}
-
-	@Override
-	public void damage(float damage, DamageType type) {
-		if (damage <= 0) {
-			// no damage
-			return;
-		}
-
-		EventBus.publish(spatial.getName(), new DamageableEvent.Damaged(this, damage, type));
-
-		this.integrity -= damage;
-
-		if (integrity <= 0) {
-			integrity = 0;
-			onDeath();
-		}
-	}
-
-	@Override
-	public void repair(float amount) {
-		if (amount <= 0) {
-			// no repair
-			return;
-		}
-
-		EventBus.publish(spatial.getName(), new DamageableEvent.Repaired(this, amount));
-
-		this.integrity = Math.min(structure.getStructuralIntegrity(), integrity + amount);
-
-	}
+	
 
 	@Override
 	public void setSpatial(Spatial spatial) {

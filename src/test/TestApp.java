@@ -166,7 +166,7 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 		createHUD();
 
 		autopilot = new Rotator();
-		autopilot.setShip(sp);
+//		autopilot.setShip(sp);
 	}
 
 	private void createAsteroid(Vector3f vector3f) {
@@ -233,7 +233,7 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 		headingText.setText(String.format("Heading: (%.2f, %.2f, %.2f)", heading.x, heading.y, heading.z));
 
 		if (activateAP) {
-			autopilot.update();
+//			autopilot.update();
 		}
 	}
 

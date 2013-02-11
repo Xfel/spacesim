@@ -9,10 +9,10 @@ import java.util.logging.Logger;
 
 import com.jme3.math.Vector3f;
 
-import spacegame.model.IShipComponent;
 import spacegame.model.ISpaceShip;
+import spacegame.model.ShipComponent;
 
-public abstract class Autopilot implements IShipComponent {
+public abstract class Autopilot extends ShipComponent {
 
 	private static final Logger log=Logger.getLogger(Autopilot.class.getName());
 	
@@ -24,48 +24,6 @@ public abstract class Autopilot implements IShipComponent {
 		waypoints = new LinkedBlockingQueue<IWaypoint>();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see spacegame.ai.IShipComponent#getShip()
-	 */
-	@Override
-	public final ISpaceShip getShip() {
-		return ship;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see spacegame.ai.IShipComponent#setShip(spacegame.model.ISpaceShip)
-	 */
-	@Override
-	public final void setShip(ISpaceShip ship) {
-		if (this.ship != null) {
-			detach(ship);
-		}
-		this.ship = ship;
-		if (ship != null) {
-			attach(ship);
-		}
-	}
-
-	protected void attach(ISpaceShip ship) {
-
-	}
-
-	protected void detach(ISpaceShip ship) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see spacegame.ai.IShipComponent#update()
-	 */
-	@Override
-	public abstract void update();
 
 	@Deprecated
 	public void queueTask(Vector3f desiredHeading, Vector3f desiredPosition) {

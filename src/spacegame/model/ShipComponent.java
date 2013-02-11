@@ -1,16 +1,15 @@
 package spacegame.model;
 
-import com.jme3.asset.AssetManager;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
 
 public abstract class ShipComponent extends AbstractControl {
 
-	public Ship getShip() {
+	public ShipControl getShip() {
 		if (spatial == null) {
 			return null;
 		}
-		return spatial.getControl(Ship.class);
+		return spatial.getControl(ShipControl.class);
 	}
 
 	@Override
@@ -24,11 +23,11 @@ public abstract class ShipComponent extends AbstractControl {
 		}
 	}
 
-	protected void attach(Ship ship) {
+	protected void attach(ShipControl ship) {
 
 	}
 
-	protected void detach(Ship ship) {
+	protected void detach(ShipControl ship) {
 
 	}
 

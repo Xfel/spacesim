@@ -3,6 +3,10 @@ package spacegame.ai.scripted;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.RenderManager;
+import com.jme3.renderer.ViewPort;
+import com.jme3.scene.Spatial;
+import com.jme3.scene.control.Control;
 
 import spacegame.ai.Autopilot;
 import spacegame.model.EngineGroup;
@@ -11,17 +15,6 @@ import spacegame.model.ISpaceShip;
 
 public class Stabilizer extends Autopilot {
 
-	@Override
-	public void update() {
-		Quaternion angv = getShip().getAngularVelocity();
-
-		float[] angles = angv.toAngles(null);
-
-		adjust(angles[0],getShip().getEngineGroup(EngineGroup.ID_SPIN_RIGHT),getShip().getEngineGroup(EngineGroup.ID_SPIN_LEFT));
-		adjust(angles[1],getShip().getEngineGroup(EngineGroup.ID_ROTATE_RIGHT),getShip().getEngineGroup(EngineGroup.ID_ROTATE_LEFT));
-		adjust(angles[2],getShip().getEngineGroup(EngineGroup.ID_ROTATE_DOWN),getShip().getEngineGroup(EngineGroup.ID_ROTATE_UP));
-
-	}
 
 	public static void adjust(float angle, EngineGroup rightDown, EngineGroup leftUp) {
 
@@ -50,5 +43,28 @@ public class Stabilizer extends Autopilot {
 			rightDown.setCurrentForce(0f);
 			leftUp.setCurrentForce(0f);
 		}
+	}
+
+	@Override
+	public Control cloneForSpatial(Spatial spatial) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected void controlUpdate(float tpf) {
+		Quaternion angv = getShip().getAngularVelocity();
+
+		float[] angles = angv.toAngles(null);
+
+		adjust(angles[0],getShip().getEngineGroup(EngineGroup.ID_SPIN_RIGHT),getShip().getEngineGroup(EngineGroup.ID_SPIN_LEFT));
+		adjust(angles[1],getShip().getEngineGroup(EngineGroup.ID_ROTATE_RIGHT),getShip().getEngineGroup(EngineGroup.ID_ROTATE_LEFT));
+		adjust(angles[2],getShip().getEngineGroup(EngineGroup.ID_ROTATE_DOWN),getShip().getEngineGroup(EngineGroup.ID_ROTATE_UP));
+	}
+
+	@Override
+	protected void controlRender(RenderManager rm, ViewPort vp) {
+		// TODO Auto-generated method stub
+		
 	}
 }

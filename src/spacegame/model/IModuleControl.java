@@ -1,13 +1,15 @@
 package spacegame.model;
 
+import com.jme3.scene.control.Control;
+
 import spacegame.model.structure.Module;
 
-public interface IModuleControl {
+public interface IModuleControl extends Control{
 	
 	Module getModule();
 	
-	Ship getShip();
+	ShipControl getShip();
 	
-	void setShip(Ship ship);
+	void setShip(ShipControl ship);
 	
 }
