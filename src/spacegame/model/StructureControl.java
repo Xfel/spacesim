@@ -29,13 +29,13 @@ public class StructureControl extends AbstractControl implements PhysicsControl,
 
 	private RigidBodyControl physics;
 
-	private Vector3f location;
+	private Vector3f location=new Vector3f();
 
-	private Quaternion rotation;
+	private Quaternion rotation=new Quaternion();
 
-	private Vector3f linearVelocity;
+	private Vector3f linearVelocity=new Vector3f();
 
-	private Quaternion angularVelocity;
+	private Quaternion angularVelocity=new Quaternion();
 
 	public StructureControl(Structure structure) {
 		this.physics = new RigidBodyControl(structure.getMass());

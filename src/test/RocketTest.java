@@ -48,17 +48,20 @@ import com.jme3.scene.VertexBuffer;
 import com.jme3.scene.Spatial.CullHint;
 import com.jme3.scene.control.CameraControl;
 import com.jme3.scene.control.CameraControl.ControlDirection;
+import com.jme3.scene.debug.Arrow;
+import com.jme3.scene.shape.Cylinder;
 import com.jme3.scene.shape.Sphere;
+import com.jme3.scene.shape.Torus;
 import com.jme3.system.AppSettings;
 import com.jme3.util.SkyFactory;
 
-public class TestApp extends SimpleApplication implements PhysicsTickListener, ActionListener {
+public class RocketTest extends SimpleApplication implements PhysicsTickListener, ActionListener {
 
 	public static void main(String[] args) {
 		Logger.getLogger("").setLevel(Level.WARNING);
 		Logger.getLogger("spacesim").setLevel(Level.INFO);
 
-		TestApp app = new TestApp();
+		RocketTest app = new RocketTest();
 		// app.setShowSettings(false);
 		AppSettings settings = new AppSettings(true);
 
@@ -75,17 +78,13 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 	}
 
 	private BulletAppState physicsState;
-	private RigidBodyControl physics;
-	// private ParticleEmitter fire1, fire2;
-	private ISpaceShip sp;
 	private BitmapText linVeloText;
 	private BitmapText angVeloText;
 	private BitmapText headingText;
-	private boolean activateAP;
-	private Autopilot autopilot;
 	private BitmapText apText;
-	private ChaseCamera followCam;
-	private Spatial shipSpatial;
+	
+	private SimpleSpaceObject rocket;
+	private Geometry forceArrow;
 
 	@Override
 	public void simpleInitApp() {
@@ -103,23 +102,8 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 		flyCam.setMoveSpeed(10f);
 		
 		
-
-		 createShip();
-
-//		sp = new SimpleSpaceShip(assetManager);
-//
-//		rootNode.attachChild(sp.getNode());
-//
-//		physicsState.getPhysicsSpace().add(physics = sp.getPhysics());
-//		physicsState.getPhysicsSpace().addTickListener(sp);
-//
-////		sp.getNode().addControl(followCam);
-//		
-//		followCam=new ChaseCamera(cam, sp.getNode(), inputManager);
-////		followCam=new CameraControl(cam, ControlDirection.SpatialToCamera);
-//		followCam.setEnabled(false);
-////		followCam.set
-////		followCam.set
+		createRocket();
+		 
 
 		cam.setLocation(new Vector3f(0, 8f, 12f));
 		cam.lookAt(new Vector3f(2, 2, 0), Vector3f.UNIT_Y);
@@ -169,26 +153,33 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 
 		createHUD();
 
-		autopilot = new Rotator();
-//		autopilot.setShip(sp);
 	}
 
-	private void createShip() {
+	
+
+	private void createRocket() {
+		Geometry geom=new Geometry("Rocket", new Cylinder(20, 20, 1, 2));
+		geom.setMaterial(assetManager.loadMaterial("Common/Materials/RedColor.j3m"));
 		
-		ShipFrame frame=new ShipFrame();
+		forceArrow=new Geometry("ForceArrow", new Arrow(new Vector3f(1,0,0)));
+		forceArrow.setMaterial(assetManager.loadMaterial("Common/Materials/WhiteColor.j3m"));
+		forceArrow.setLocalTranslation(0, 0, 1);
 		
-		frame.setMass(20f);
-		frame.setModelName("Models/Complete/FirstShip/FirstShip_LowPoly.blend");
-		frame.setName("FirstShip");
-		frame.setStructuralIntegrity(2000f);
+		Node rnode=new Node();
+		rnode.attachChild(geom);
+		rnode.attachChild(forceArrow);
 		
-		
-		shipSpatial=frame.createSpatial(assetManager);
-		rootNode.attachChild(shipSpatial);
-		physicsState.getPhysicsSpace().addAll(shipSpatial);
-		
-		sp=shipSpatial.getControl(ISpaceShip.class);
+		rocket = new SimpleSpaceObject(rnode, 5);
+
+		rootNode.attachChild(rocket.getNode());
+//		astObj.getPhysics().setPhysicsLocation(vector3f);
+
+		physicsState.getPhysicsSpace().add(rocket.getPhysics());
+		physicsState.getPhysicsSpace().addTickListener(rocket);
+		rocket.getPhysics().setLinearVelocity(new Vector3f(0, 0, 0));
 	}
+
+
 
 	private void createAsteroid(Vector3f vector3f) {
 		Spatial aster = assetManager.loadModel("Models/Asteroids/rock_textured.blend");
@@ -235,10 +226,10 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 	public void simpleUpdate(float tpf) {
 		super.simpleUpdate(tpf);
 
-		Vector3f linearVelocity = sp.getLinearVelocity();
+		Vector3f linearVelocity = rocket.getLinearVelocity();
 		linVeloText.setText(String.format("Linear Velocity: (%.2f, %.2f, %.2f)", linearVelocity.x, linearVelocity.y,
 				linearVelocity.z));
-		float[] angles = sp.getAngularVelocity().toAngles(null);
+		float[] angles = rocket.getAngularVelocity().toAngles(null);
 		// StringBuilder sb = new StringBuilder("(");
 		// for (int i = 0; i < angles.length; i++) {
 		// sb.append(angles[i] * FastMath.RAD_TO_DEG);
@@ -250,65 +241,29 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 		angVeloText.setText(String.format("Angular Velocity: (%.2f, %.2f, %.2f)", angles[0] * FastMath.RAD_TO_DEG,
 				angles[1] * FastMath.RAD_TO_DEG, angles[2] * FastMath.RAD_TO_DEG));
 
-		Vector3f heading = sp.getRotation().mult(Vector3f.UNIT_X);
+		Vector3f heading = rocket.getRotation().multLocal(new Vector3f(0, 0, -1));
 		headingText.setText(String.format("Heading: (%.2f, %.2f, %.2f)", heading.x, heading.y, heading.z));
 
-		if (activateAP) {
-//			autopilot.update();
-		}
+		
+		Vector3f rtarget=new Vector3f(20, 0, 0);
+		float rforce=1f;
+		
+		Vector3f direction = rtarget.subtractLocal(rocket.getLocation());
+		
+		Vector3f localDH = direction.normalize();
+		Quaternion rot = new Quaternion();
+		rot.fromAngleAxis(heading.angleBetween(localDH)/2, heading.cross(localDH, localDH));
+		
+		Vector3f forceDir=rot.inverse().multLocal(new Vector3f(0,  0,-1));
+		
+		rocket.getPhysics().applyForce(forceDir.multLocal(rforce), rocket.getRotation().multLocal(new Vector3f(0,  0, 1)));
+		
+		((Arrow)forceArrow.getMesh()).setArrowExtent(forceDir.negate());
 	}
 
 	@Override
 	public void prePhysicsTick(PhysicsSpace space, float f) {
-		//
-		// if (drive) {
-		// physics.applyForce(physics.getPhysicsRotationMatrix().mult(new
-		// Vector3f(1, 0, 0)), physics
-		// .getPhysicsRotationMatrix().mult(new Vector3f(-1, 0, 0)));
-		//
-		// }
-		// if (left) {
-		//
-		// physics.applyForce(physics.getPhysicsRotationMatrix().mult(new
-		// Vector3f(0, 0, 1)), physics
-		// .getPhysicsRotationMatrix().mult(new Vector3f(2, 0, 0)));
-		// physics.applyForce(physics.getPhysicsRotationMatrix().mult(new
-		// Vector3f(0, 0, -1)), physics
-		// .getPhysicsRotationMatrix().mult(new Vector3f(-2, 0, 0)));
-		// }else if (right) {
-		//
-		// physics.applyForce(physics.getPhysicsRotationMatrix().mult(new
-		// Vector3f(0, 0, -1)), physics
-		// .getPhysicsRotationMatrix().mult(new Vector3f(2, 0, 0)));
-		// physics.applyForce(physics.getPhysicsRotationMatrix().mult(new
-		// Vector3f(0, 0, 1)), physics
-		// .getPhysicsRotationMatrix().mult(new Vector3f(-2, 0, 0)));
-		// }
-		//
-		// if (up) {
-		//
-		// physics.applyForce(physics.getPhysicsRotationMatrix().mult(new
-		// Vector3f(0, 1, 0)), physics
-		// .getPhysicsRotationMatrix().mult(new Vector3f(2, 0, 0)));
-		// physics.applyForce(physics.getPhysicsRotationMatrix().mult(new
-		// Vector3f(0, -1, 0)), physics
-		// .getPhysicsRotationMatrix().mult(new Vector3f(-2, 0, 0)));
-		// }else if (down) {
-		//
-		// physics.applyForce(physics.getPhysicsRotationMatrix().mult(new
-		// Vector3f(0, -1, 0)), physics
-		// .getPhysicsRotationMatrix().mult(new Vector3f(2, 0, 0)));
-		// physics.applyForce(physics.getPhysicsRotationMatrix().mult(new
-		// Vector3f(0, 1, 0)), physics
-		// .getPhysicsRotationMatrix().mult(new Vector3f(-2, 0, 0)));
-		// }
-
-		// if (next) {
-		// physics.setAngularVelocity(new Vector3f(0, 0, 0.6f));
-		// } else {
-		// physics.setAngularVelocity(Vector3f.ZERO);
-		//
-		// }
+		
 	}
 
 	@Override
@@ -318,87 +273,7 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 
 	@Override
 	public void onAction(String name, boolean isPressed, float tpf) {
-		if (name.equals("drive")) {
-			if (isPressed) {
-				sp.getEngineGroup(EngineGroup.ID_MAIN_DRIVE).setCurrentForce(1f);
-			} else {
-				sp.getEngineGroup(EngineGroup.ID_MAIN_DRIVE).setCurrentForce(0f);
-			}
-		} else if (name.equals("rotateUp")) {
-			if (isPressed) {
-				sp.getEngineGroup(EngineGroup.ID_ROTATE_UP).setCurrentForce(1f);
-			} else {
-				sp.getEngineGroup(EngineGroup.ID_ROTATE_UP).setCurrentForce(0f);
-			}
-		} else if (name.equals("rotateDown")) {
-			if (isPressed) {
-				sp.getEngineGroup(EngineGroup.ID_ROTATE_DOWN).setCurrentForce(1f);
-			} else {
-				sp.getEngineGroup(EngineGroup.ID_ROTATE_DOWN).setCurrentForce(0f);
-			}
-		} else if (name.equals("rotateLeft")) {
-			if (isPressed) {
-				sp.getEngineGroup(EngineGroup.ID_ROTATE_LEFT).setCurrentForce(1f);
-			} else {
-				sp.getEngineGroup(EngineGroup.ID_ROTATE_LEFT).setCurrentForce(0f);
-			}
-		} else if (name.equals("rotateRight")) {
-			if (isPressed) {
-				sp.getEngineGroup(EngineGroup.ID_ROTATE_RIGHT).setCurrentForce(1f);
-			} else {
-				sp.getEngineGroup(EngineGroup.ID_ROTATE_RIGHT).setCurrentForce(0f);
-			}
-		} else if (name.equals("reset")) {
-//			sp.getPhysics().setAngularVelocity(Vector3f.ZERO);
-//			sp.getPhysics().setLinearVelocity(Vector3f.ZERO);
-//
-//			sp.getPhysics().setPhysicsLocation(Vector3f.ZERO);
-//			sp.getPhysics().setPhysicsRotation(Quaternion.IDENTITY);
-		} else if (name.equals("autopilot")) {
-			if (isPressed) {
-				activateAP = !activateAP;
-				if (activateAP) {
-					String input = JOptionPane.showInputDialog("Enter target vector or cancel for stabilize");
-					if (input != null) {
-						String[] str = input.split(",");
-						
-						if(str.length!=3){
-							JOptionPane.showMessageDialog(null, "You have to enter three vector components.", "Invalid input",
-									JOptionPane.ERROR_MESSAGE);
-							activateAP = false;
-							return;
-						}
-						
-						float x, y, z;
-
-						try {
-							x = Float.parseFloat(str[0]);
-							y = Float.parseFloat(str[1]);
-							z = Float.parseFloat(str[2]);
-						} catch (NumberFormatException e) {
-							JOptionPane.showMessageDialog(null, "Invalid number: " + e.getMessage(), "Invalid input",
-									JOptionPane.ERROR_MESSAGE);
-							activateAP = false;
-							return;
-						}
-						autopilot.queueTask(new Vector3f(x, y, z), Vector3f.ZERO);
-						autopilot.queueTask(Vector3f.UNIT_X, Vector3f.ZERO);
-					}
-					apText.setText("Autopilot: on");
-				} else {
-					autopilot.clearTask();
-					sp.stopAllEngines();
-					apText.setText("Autopilot: off");
-				}
-
-			}
-		}else if(name.equals("cam")&&isPressed){
-			
-			boolean enable=flyCam.isEnabled();
-			
-			followCam.setEnabled(enable);
-			flyCam.setEnabled(!enable);
-		}
+		
 	}
 
 }
