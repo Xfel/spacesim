@@ -70,7 +70,7 @@ public class IntegrityControl implements IDamageable {
 
 		EventBus.publish(spatial.getName(), new DamageableEvent.Damaged(this, damage, type));
 
-		float integrity = spatial.getUserData(UD_INTEGRITY);
+		float integrity = getIntegrity();
 
 		integrity -= damage;
 
@@ -91,7 +91,7 @@ public class IntegrityControl implements IDamageable {
 
 		EventBus.publish(spatial.getName(), new DamageableEvent.Repaired(this, amount));
 
-		float integrity = spatial.getUserData(UD_INTEGRITY);
+		float integrity = getIntegrity();
 
 		integrity += amount;
 		if (integrity >= maximumIntegrity) {

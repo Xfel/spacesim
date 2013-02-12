@@ -3,9 +3,9 @@ package spacegame.script;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 
 import com.jme3.app.Application;
 import com.jme3.app.state.AbstractAppState;
@@ -19,8 +19,8 @@ import com.naef.jnlua.NamedJavaFunction;
 public class LuaAppState extends AbstractAppState {
 
 	private static class LoadTextFile implements NamedJavaFunction {
-		
-		private static final Logger log=Logger.getLogger(LoadTextFile.class.getName());
+
+		private static final Logger log = Logger.getLogger(LoadTextFile.class.getName());
 
 		private AssetManager assetManager;
 
@@ -42,29 +42,17 @@ public class LuaAppState extends AbstractAppState {
 			}
 			InputStream is = inf.openStream();
 			try {
-				StringBuilder sb = new StringBuilder();
-
-				InputStreamReader isr = new InputStreamReader(is, "ASCII");
-
-				char[] cbuf = new char[1024];
-
-				while (true) {
-					int read = isr.read(cbuf);
-					if (read == -1) {
-						break;
-					}
-					sb.append(cbuf, 0, read);
-				}
+				String code = readAll(is);
 
 				luaState.pushBoolean(true);
-				luaState.pushString(sb.toString());
+				luaState.pushString(code);
 				return 2;
-
 			} catch (IOException e) {
 				luaState.pushBoolean(false);
 				luaState.pushString(e.getMessage());
 				return 2;
-			} finally {
+			}
+			finally {
 				try {
 					is.close();
 				} catch (IOException e) {
@@ -79,8 +67,33 @@ public class LuaAppState extends AbstractAppState {
 		}
 
 	}
+	
+	private static LuaAppState instance;
+	
+	public static LuaAppState getInstance() {
+		return instance;
+	}
+
+	public static String readAll(InputStream is) throws IOException {
+		StringBuilder sb = new StringBuilder();
+
+		InputStreamReader isr = new InputStreamReader(is, "ASCII");
+
+		char[] cbuf = new char[1024];
+
+		while (true) {
+			int read = isr.read(cbuf);
+			if (read == -1) {
+				break;
+			}
+			sb.append(cbuf, 0, read);
+		}
+
+		return sb.toString();
+	}
 
 	private LuaState luaState;
+	private Application app;
 
 	/*
 	 * (non-Javadoc)
@@ -90,7 +103,12 @@ public class LuaAppState extends AbstractAppState {
 	 */
 	@Override
 	public void initialize(AppStateManager stateManager, Application app) {
-		super.initialize(stateManager, app);
+		if (initialized) {
+			return;
+		}
+		initialized=true;
+		
+		this.app=app;
 
 		// initialize lua state
 		luaState = new LuaState();
@@ -101,16 +119,37 @@ public class LuaAppState extends AbstractAppState {
 		luaState.openLib(LuaState.Library.MATH);
 		luaState.openLib(LuaState.Library.COROUTINE);
 		luaState.openLib(LuaState.Library.BIT32);
-		// don't open os, io, java and package
+		// don't open os, io, java, debug and package
 
+		// register native libs
 		luaState.register(new LoadTextFile(app.getAssetManager()));
 
+		// load own libs
+		try {
+			luaState.load(getClass().getResourceAsStream("/Scripts/general.lua"), "general.lua", "bt");
+			luaState.call(0, 0);
+		} catch (IOException e) {
+		}
+
+
+		instance=this;
+		app.getAssetManager().registerLoader(LuaLoader.class, "lua");
 //		app.getAssetManager().registerLoader(LuaLoader.class, "lua");
 
 	}
 
-	public void loadConfigFile(String name) {
+	public LuaState getLuaState() {
+		return luaState;
+	}
 
+	public void loadConfigFile(InputStream data, String name) throws IOException {
+		String code = readAll(data);
+		
+		luaState.getGlobal("loadConfig");
+		luaState.pushString(code);
+		luaState.pushString(name);
+		
+		luaState.call(2, 1);
 	}
 
 	/*
@@ -120,11 +159,16 @@ public class LuaAppState extends AbstractAppState {
 	 */
 	@Override
 	public void cleanup() {
+		if (!initialized)
+			return;
+		app.getAssetManager().unregisterLoader(LuaLoader.class);
+		instance=null;
+
 		luaState.close();
 
 		luaState = null;
 
-		super.cleanup();
+		initialized = false;
 	}
 
 }

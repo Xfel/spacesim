@@ -47,6 +47,16 @@ protectedEnvMT.__index = function(_table, _key)
 	return _ENV[_key]
 end
 
+function loadConfig(code,name)
+	local config={}
+
+	setmetatable(config, protectedEnvMT)
+
+	local cfg = load(code, name, "bt", config)
+	cfg()
+	return config
+end
+
 function import(name)
 	local config={}
 
