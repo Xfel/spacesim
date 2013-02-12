@@ -16,7 +16,10 @@ import spacegame.model.EngineGroup;
 import spacegame.model.IShipEngine;
 import spacegame.model.ISpaceShip;
 import spacegame.model.structure.ShipFrame;
+import spacegame.physics.ExtendedPhysicsAppState;
+import spacegame.util.NumpadFlyByCamera;
 
+import com.jme3.app.FlyCamAppState;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.bullet.BulletAppState;
@@ -75,7 +78,6 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 	}
 
 	private BulletAppState physicsState;
-	private RigidBodyControl physics;
 	// private ParticleEmitter fire1, fire2;
 	private ISpaceShip sp;
 	private BitmapText linVeloText;
@@ -89,7 +91,7 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 
 	@Override
 	public void simpleInitApp() {
-		physicsState = new BulletAppState();
+		physicsState = new ExtendedPhysicsAppState();
 		physicsState.setThreadingType(ThreadingType.PARALLEL);
 		stateManager.attach(physicsState);
 		// physicsState.getPhysicsSpace().enableDebug(assetManager);
@@ -98,10 +100,13 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 
 		// viewPort.setBackgroundColor(ColorRGBA.Blue);
 
+		flyCam=new NumpadFlyByCamera(cam);
 		flyCam.setEnabled(true);
 		flyCam.setDragToRotate(true);
 		flyCam.setMoveSpeed(10f);
 		
+		stateManager.detach(stateManager.getState(FlyCamAppState.class));
+		flyCam.registerWithInput(inputManager);
 		
 
 		 createShip();
