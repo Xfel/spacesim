@@ -5,6 +5,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 
 import spacegame.model.structure.Module;
+import spacegame.model.structure.ModuleType;
 
 public class EngineModule extends Module{
 	
@@ -61,5 +62,8 @@ public class EngineModule extends Module{
 	public Spatial createSpatial(AssetManager assets) {
 		return null;
 	}
-	
+	@Override
+	public ModuleType getType() {
+		return ModuleType.ENGINE;
+	}
 }

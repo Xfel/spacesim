@@ -19,13 +19,26 @@ public class ShipFrame extends Structure {
 		Spatial model=assets.loadModel(getModelName());
 		
 		model.addControl(new ShipControl(this));
-		model.addControl(new IntegrityControl(getStructuralIntegrity()));
+		model.addControl(new IntegrityControl(getIntegrity()));
 		
 		return model;
 	}
 	
 	public ModuleSocket getSocket(String id){
 		return sockets.get(id);
+	}
+	
+	public void addSocket(String id, ModuleSocket socket){
+		if(socket.getId()!=null){
+			throw new IllegalStateException("socket is already added to a ship");
+		}
+		if(sockets.containsKey(id)){
+			throw new IllegalArgumentException("socket id duplication");
+		}
+		
+		socket.setId(id);
+		
+		sockets.put(id, socket);
 	}
 	
 }

@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,24 +43,27 @@ public class LuaAppState extends AbstractAppState {
 				return 2;
 			}
 			InputStream is = inf.openStream();
-			try {
-				String code = readAll(is);
-
-				luaState.pushBoolean(true);
-				luaState.pushString(code);
-				return 2;
-			} catch (IOException e) {
-				luaState.pushBoolean(false);
-				luaState.pushString(e.getMessage());
-				return 2;
-			}
-			finally {
-				try {
-					is.close();
-				} catch (IOException e) {
-					log.log(Level.WARNING, "Error closing stream", e);
-				}
-			}
+//			try {
+//				String code = readAll(is);
+//
+//				luaState.pushBoolean(true);
+//				luaState.pushString(code);
+//				return 2;
+//			} catch (IOException e) {
+//				luaState.pushBoolean(false);
+//				luaState.pushString(e.getMessage());
+//				return 2;
+//			}
+//			finally {
+//				try {
+//					is.close();
+//				} catch (IOException e) {
+//					log.log(Level.WARNING, "Error closing stream", e);
+//				}
+//			}
+			luaState.pushBoolean(true);
+			luaState.pushJavaFunction(new LuaInputStream(is));
+			return 2;
 		}
 
 		@Override
@@ -67,14 +72,14 @@ public class LuaAppState extends AbstractAppState {
 		}
 
 	}
-	
+
 	private static LuaAppState instance;
-	
+
 	public static LuaAppState getInstance() {
 		return instance;
 	}
 
-	public static String readAll(InputStream is) throws IOException {
+/*	public static String readAll(InputStream is) throws IOException {
 		StringBuilder sb = new StringBuilder();
 
 		InputStreamReader isr = new InputStreamReader(is, "ASCII");
@@ -92,6 +97,35 @@ public class LuaAppState extends AbstractAppState {
 		return sb.toString();
 	}
 
+	public static byte[] readAllBytes(InputStream is) throws IOException {
+
+		int capacity = Math.max(256, is.available());
+		byte[] buf = new byte[capacity];
+		int nread = 0;
+		int rem = buf.length;
+		int n;
+		// read to EOF which may read more or less than initialSize (eg: file
+		// is truncated while we are reading)
+		while ((n = is.read(buf, nread, rem)) > 0) {
+			nread += n;
+			rem -= n;
+			assert rem >= 0;
+			if (rem == 0) {
+				// need larger buffer
+				int newCapacity = capacity << 1;
+				if (newCapacity < 0) {
+					if (capacity == Integer.MAX_VALUE)
+						throw new OutOfMemoryError("Required array size too large");
+					newCapacity = Integer.MAX_VALUE;
+				}
+				rem = newCapacity - capacity;
+				buf = Arrays.copyOf(buf, newCapacity);
+				capacity = newCapacity;
+			}
+		}
+		return (capacity == nread) ? buf : Arrays.copyOf(buf, nread);
+	}*/
+
 	private LuaState luaState;
 	private Application app;
 
@@ -106,9 +140,9 @@ public class LuaAppState extends AbstractAppState {
 		if (initialized) {
 			return;
 		}
-		initialized=true;
-		
-		this.app=app;
+		initialized = true;
+
+		this.app = app;
 
 		// initialize lua state
 		luaState = new LuaState();
@@ -126,13 +160,15 @@ public class LuaAppState extends AbstractAppState {
 
 		// load own libs
 		try {
-			luaState.load(getClass().getResourceAsStream("/Scripts/general.lua"), "general.lua", "bt");
+			luaState.load(getClass().getResourceAsStream("/Scripts/general.lua"), "general", "bt");
 			luaState.call(0, 0);
+			
+			LuaLoader.initConfigLib(luaState);
 		} catch (IOException e) {
 		}
+		
 
-
-		instance=this;
+		instance = this;
 		app.getAssetManager().registerLoader(LuaLoader.class, "lua");
 //		app.getAssetManager().registerLoader(LuaLoader.class, "lua");
 
@@ -140,16 +176,6 @@ public class LuaAppState extends AbstractAppState {
 
 	public LuaState getLuaState() {
 		return luaState;
-	}
-
-	public void loadConfigFile(InputStream data, String name) throws IOException {
-		String code = readAll(data);
-		
-		luaState.getGlobal("loadConfig");
-		luaState.pushString(code);
-		luaState.pushString(name);
-		
-		luaState.call(2, 1);
 	}
 
 	/*
@@ -162,13 +188,22 @@ public class LuaAppState extends AbstractAppState {
 		if (!initialized)
 			return;
 		app.getAssetManager().unregisterLoader(LuaLoader.class);
-		instance=null;
+		instance = null;
 
 		luaState.close();
 
 		luaState = null;
 
 		initialized = false;
+	}
+
+	public static String extractFileName(String name) {
+		int start = name.lastIndexOf('/') + 1;
+		int end = name.length();
+		if (name.endsWith(".lua")) {
+			end -= 4;
+		}
+		return name.substring(start, end);
 	}
 
 }

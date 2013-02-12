@@ -64,7 +64,7 @@ public class ShipControl extends StructureControl implements ISpaceShip {
 
 		node.setName(socketId);
 
-		node.setLocalTransform(socket.getLocation());
+		node.setLocalTransform(socket.getTransform());
 
 		((Node) getSpatial()).attachChild(node);
 
@@ -80,7 +80,7 @@ public class ShipControl extends StructureControl implements ISpaceShip {
 	public void removeModule(String socketId) {
 		ModuleSocket socket = frame.getSocket(socketId);
 
-		IModuleControl control = modules.get(socket);
+		IModuleControl control = modules.remove(socket);
 		control.setShip(null);
 
 		for (int i = 0; i < ((Node) getSpatial()).getQuantity(); i++) {

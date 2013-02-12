@@ -17,7 +17,7 @@ public class LoadModelTest {
 		frame.setName("FirstShip");
 		
 		frame.setMass(20f);
-		frame.setStructuralIntegrity(4000f);
+		frame.setIntegrity(4000f);
 		
 		frame.setOutline(new BoxCollisionShape(new Vector3f(1, 2, 1)));
 		

@@ -15,12 +15,16 @@ import spacegame.ai.scripted.Stabilizer;
 import spacegame.model.EngineGroup;
 import spacegame.model.IShipEngine;
 import spacegame.model.ISpaceShip;
+import spacegame.model.modules.EngineModule;
 import spacegame.model.structure.ShipFrame;
 import spacegame.physics.ExtendedPhysicsAppState;
+import spacegame.script.LuaAppState;
 import spacegame.util.NumpadFlyByCamera;
 
+import com.jme3.app.DebugKeysAppState;
 import com.jme3.app.FlyCamAppState;
 import com.jme3.app.SimpleApplication;
+import com.jme3.app.StatsAppState;
 import com.jme3.app.state.ScreenshotAppState;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.BulletAppState.ThreadingType;
@@ -88,6 +92,11 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 	private BitmapText apText;
 	private ChaseCamera followCam;
 	private Spatial shipSpatial;
+	private LuaAppState luaAppState;
+
+	public TestApp() {
+		super(new StatsAppState(), new DebugKeysAppState());
+	}
 
 	@Override
 	public void simpleInitApp() {
@@ -98,18 +107,25 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 		physicsState.getPhysicsSpace().setGravity(new Vector3f(0, 0, 0));
 		physicsState.getPhysicsSpace().addTickListener(this);
 
-		// viewPort.setBackgroundColor(ColorRGBA.Blue);
+		luaAppState = new LuaAppState();
+		stateManager.attach(luaAppState);
 
-		flyCam=new NumpadFlyByCamera(cam);
+		// we have to call that now, unfortunately
+		luaAppState.initialize(stateManager, this);
+		
+		
+
+//		viewPort.setClearFlags(false, false, false);
+
+		flyCam = new NumpadFlyByCamera(cam);
 		flyCam.setEnabled(true);
 		flyCam.setDragToRotate(true);
 		flyCam.setMoveSpeed(10f);
-		
-		stateManager.detach(stateManager.getState(FlyCamAppState.class));
-		flyCam.registerWithInput(inputManager);
-		
 
-		 createShip();
+//		stateManager.detach(stateManager.getState(FlyCamAppState.class));
+		flyCam.registerWithInput(inputManager);
+
+		createShip();
 
 //		sp = new SimpleSpaceShip(assetManager);
 //
@@ -120,15 +136,15 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 //
 ////		sp.getNode().addControl(followCam);
 //		
-//		followCam=new ChaseCamera(cam, sp.getNode(), inputManager);
-////		followCam=new CameraControl(cam, ControlDirection.SpatialToCamera);
-//		followCam.setEnabled(false);
+		followCam = new ChaseCamera(cam, shipSpatial, inputManager);
+//		followCam=new CameraControl(cam, ControlDirection.SpatialToCamera);
+		followCam.setEnabled(false);
 ////		followCam.set
 ////		followCam.set
 
 		cam.setLocation(new Vector3f(0, 8f, 12f));
 		cam.lookAt(new Vector3f(2, 2, 0), Vector3f.UNIT_Y);
-		
+
 		createAsteroid(new Vector3f(20, 0, 0));
 		createAsteroid(new Vector3f(10, 40, 0));
 		createAsteroid(new Vector3f(0, 0, 30));
@@ -175,24 +191,32 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 		createHUD();
 
 		autopilot = new Rotator();
+		autopilot.setEnabled(false);
+		shipSpatial.addControl(autopilot);
 //		autopilot.setShip(sp);
 	}
 
 	private void createShip() {
 		
-		ShipFrame frame=new ShipFrame();
-		
-		frame.setMass(20f);
-		frame.setModelName("Models/Complete/FirstShip/FirstShip_LowPoly.blend");
-		frame.setName("FirstShip");
-		frame.setStructuralIntegrity(2000f);
-		
-		
-		shipSpatial=frame.createSpatial(assetManager);
+		ShipFrame frame = (ShipFrame) assetManager.loadAsset("Models/Complete/FirstShip/FirstShip_LowPoly.lua");
+
+//		ShipFrame frame = new ShipFrame();
+//
+//		frame.setMass(20f);
+//		frame.setModelName("Models/Complete/FirstShip/FirstShip_LowPoly.blend");
+//		frame.setName("FirstShip");
+//		frame.setIntegrity(2000f);
+
+		shipSpatial = frame.createSpatial(assetManager);
 		rootNode.attachChild(shipSpatial);
 		physicsState.getPhysicsSpace().addAll(shipSpatial);
-		
-		sp=shipSpatial.getControl(ISpaceShip.class);
+
+		sp = shipSpatial.getControl(ISpaceShip.class);
+
+		EngineModule mainEngineModule = new EngineModule();
+		mainEngineModule.setMass(5f);
+		mainEngineModule.setName("MainEngine");
+
 	}
 
 	private void createAsteroid(Vector3f vector3f) {
@@ -366,14 +390,14 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 					String input = JOptionPane.showInputDialog("Enter target vector or cancel for stabilize");
 					if (input != null) {
 						String[] str = input.split(",");
-						
-						if(str.length!=3){
-							JOptionPane.showMessageDialog(null, "You have to enter three vector components.", "Invalid input",
-									JOptionPane.ERROR_MESSAGE);
+
+						if (str.length != 3) {
+							JOptionPane.showMessageDialog(null, "You have to enter three vector components.",
+									"Invalid input", JOptionPane.ERROR_MESSAGE);
 							activateAP = false;
 							return;
 						}
-						
+
 						float x, y, z;
 
 						try {
@@ -395,12 +419,13 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 					sp.stopAllEngines();
 					apText.setText("Autopilot: off");
 				}
+				autopilot.setEnabled(activateAP);
 
 			}
-		}else if(name.equals("cam")&&isPressed){
-			
-			boolean enable=flyCam.isEnabled();
-			
+		} else if (name.equals("cam") && isPressed) {
+
+			boolean enable = flyCam.isEnabled();
+
 			followCam.setEnabled(enable);
 			flyCam.setEnabled(!enable);
 		}

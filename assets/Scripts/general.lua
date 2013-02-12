@@ -22,47 +22,13 @@ dofile = function( _sFile )
 	end
 end
 
--- import function
 
-local hiddenGlobals= {
-	load=true,
-	loadfile=true,
-	dofile=true
-}
+-- various additions to default libs
 
-local protectedEnvMT ={
-	__metatable="The environment metatable is protected",
-
-
-}
-protectedEnvMT.__index = function(_table, _key)
-	if hiddenGlobals[_key] then
-		return nil
-	end
-	
-	if _key == "_G" then
-		return protectedEnvMT;
-	end
-
-	return _ENV[_key]
+function string.starts(String,Start)
+   return string.sub(String,1,string.len(Start))==Start
 end
 
-function loadConfig(code,name)
-	local config={}
-
-	setmetatable(config, protectedEnvMT)
-
-	local cfg = load(code, name, "bt", config)
-	cfg()
-	return config
-end
-
-function import(name)
-	local config={}
-
-	setmetatable(config, protectedEnvMT)
-
-	local cfg = loadfile(name, "bt", config)
-	cfg()
-	return config
+function string.ends(String,End)
+   return End=='' or string.sub(String,-string.len(End))==End
 end

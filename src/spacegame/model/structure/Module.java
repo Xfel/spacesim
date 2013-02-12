@@ -4,23 +4,12 @@ package spacegame.model.structure;
 
 public abstract class Module extends Structure{
 	
-	private ModuleType type;
-	
 	private ModuleTier tier;
 
 	/**
 	 * @return the type
 	 */
-	public ModuleType getType() {
-		return type;
-	}
-
-	/**
-	 * @param type the type to set
-	 */
-	public void setType(ModuleType type) {
-		this.type = type;
-	}
+	public abstract ModuleType getType();
 
 	/**
 	 * @return the tier

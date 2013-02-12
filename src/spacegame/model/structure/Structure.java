@@ -18,10 +18,12 @@ import com.jme3.scene.Spatial;
 
 public class Structure implements Savable {
 
+	private String id;
+	
 	private String modelName;
 	private String name;
 	private float mass;
-	private float structuralIntegrity;
+	private float integrity;
 
 	private CollisionShape outline;
 
@@ -58,16 +60,30 @@ public class Structure implements Savable {
 	/**
 	 * @return the structuralIntegrity
 	 */
-	public float getStructuralIntegrity() {
-		return structuralIntegrity;
+	public float getIntegrity() {
+		return integrity;
 	}
 
 	/**
 	 * @param structuralIntegrity
 	 *            the structuralIntegrity to set
 	 */
-	public void setStructuralIntegrity(float structuralIntegrity) {
-		this.structuralIntegrity = structuralIntegrity;
+	public void setIntegrity(float structuralIntegrity) {
+		this.integrity = structuralIntegrity;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getModelName() {
@@ -93,7 +109,7 @@ public class Structure implements Savable {
 		caps.write(name, "name", null);
 		caps.write(modelName, "model", null);
 		caps.write(mass, "mass", 0);
-		caps.write(structuralIntegrity, "integrity", 0);
+		caps.write(integrity, "integrity", 0);
 
 		caps.write(outline, "outline", null);
 	}
@@ -105,7 +121,7 @@ public class Structure implements Savable {
 		name = caps.readString("name", null);
 		modelName = caps.readString("model", null);
 		mass = caps.readFloat("mass", 0);
-		structuralIntegrity = caps.readFloat("integrity", 0);
+		integrity = caps.readFloat("integrity", 0);
 		
 		outline=(CollisionShape) caps.readSavable("outline", null);
 
@@ -115,7 +131,7 @@ public class Structure implements Savable {
 		Spatial model=assets.loadModel(modelName);
 		
 		model.addControl(new StructureControl(this));
-		model.addControl(new IntegrityControl(structuralIntegrity));
+		model.addControl(new IntegrityControl(integrity));
 		
 		return model;
 	}

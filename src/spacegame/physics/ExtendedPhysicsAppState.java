@@ -3,6 +3,7 @@ package spacegame.physics;
 import java.util.ArrayList;
 import java.util.List;
 
+import spacegame.model.DamageType;
 import spacegame.model.IDamageable;
 
 import com.jme3.bullet.BulletAppState;
@@ -68,7 +69,10 @@ public class ExtendedPhysicsAppState extends BulletAppState implements PhysicsCo
 
 	@Override
 	public void collision(PhysicsCollisionEvent event) {
+		System.out.println(event.getAppliedImpulse());
 		if (event.getNodeA().getControl(IDamageable.class) != null) {
+			
+			event.getNodeA().getControl(IDamageable.class).damage(event.getAppliedImpulse(), DamageType.Kinetic);
 			
 		}
 	}
