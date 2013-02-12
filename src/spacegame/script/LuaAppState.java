@@ -20,6 +20,8 @@ import com.naef.jnlua.NamedJavaFunction;
 
 public class LuaAppState extends AbstractAppState {
 
+	private static final Logger log = Logger.getLogger(LuaAppState.class.getName());
+
 	private static class LoadTextFile implements NamedJavaFunction {
 
 		private static final Logger log = Logger.getLogger(LoadTextFile.class.getName());
@@ -79,53 +81,6 @@ public class LuaAppState extends AbstractAppState {
 		return instance;
 	}
 
-/*	public static String readAll(InputStream is) throws IOException {
-		StringBuilder sb = new StringBuilder();
-
-		InputStreamReader isr = new InputStreamReader(is, "ASCII");
-
-		char[] cbuf = new char[1024];
-
-		while (true) {
-			int read = isr.read(cbuf);
-			if (read == -1) {
-				break;
-			}
-			sb.append(cbuf, 0, read);
-		}
-
-		return sb.toString();
-	}
-
-	public static byte[] readAllBytes(InputStream is) throws IOException {
-
-		int capacity = Math.max(256, is.available());
-		byte[] buf = new byte[capacity];
-		int nread = 0;
-		int rem = buf.length;
-		int n;
-		// read to EOF which may read more or less than initialSize (eg: file
-		// is truncated while we are reading)
-		while ((n = is.read(buf, nread, rem)) > 0) {
-			nread += n;
-			rem -= n;
-			assert rem >= 0;
-			if (rem == 0) {
-				// need larger buffer
-				int newCapacity = capacity << 1;
-				if (newCapacity < 0) {
-					if (capacity == Integer.MAX_VALUE)
-						throw new OutOfMemoryError("Required array size too large");
-					newCapacity = Integer.MAX_VALUE;
-				}
-				rem = newCapacity - capacity;
-				buf = Arrays.copyOf(buf, newCapacity);
-				capacity = newCapacity;
-			}
-		}
-		return (capacity == nread) ? buf : Arrays.copyOf(buf, nread);
-	}*/
-
 	private LuaState luaState;
 	private Application app;
 
@@ -159,14 +114,21 @@ public class LuaAppState extends AbstractAppState {
 		luaState.register(new LoadTextFile(app.getAssetManager()));
 
 		// load own libs
+		InputStream is = getClass().getResourceAsStream("/Scripts/general.lua");
 		try {
-			luaState.load(getClass().getResourceAsStream("/Scripts/general.lua"), "general", "bt");
+			luaState.load(is, "general", "bt");
 			luaState.call(0, 0);
-			
+
 			LuaLoader.initConfigLib(luaState);
 		} catch (IOException e) {
+			log.log(Level.SEVERE, "Error loading internal lua libraries", e);
+		} finally {
+			try {
+				is.close();
+			} catch (IOException e) {
+				log.log(Level.SEVERE, "Error closing stream", e);
+			}
 		}
-		
 
 		instance = this;
 		app.getAssetManager().registerLoader(LuaLoader.class, "lua");
