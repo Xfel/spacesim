@@ -1,10 +1,10 @@
 package spacegame.model.modules;
 
-import com.jme3.asset.AssetManager;
-import com.jme3.scene.Spatial;
-
 import spacegame.model.structure.Module;
 import spacegame.model.structure.ModuleType;
+
+import com.jme3.asset.AssetManager;
+import com.jme3.scene.Spatial;
 
 public class PowerplantModule extends Module {
 

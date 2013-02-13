@@ -1,7 +1,6 @@
 package spacegame.app;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.input.InputManager;
 import com.jme3.system.AppSettings;
 
 public class SpaceSimApp extends SimpleApplication{

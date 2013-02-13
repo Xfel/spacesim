@@ -1,9 +1,6 @@
 package spacegame.model.control;
 
 import java.io.IOException;
-import java.io.InputStream;
-
-import javax.print.DocFlavor.STRING;
 
 import org.bushe.swing.event.EventBus;
 

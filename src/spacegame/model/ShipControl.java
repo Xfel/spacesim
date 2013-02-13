@@ -1,31 +1,16 @@
 package spacegame.model;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import spacegame.app.SpaceSimApp;
 import spacegame.model.structure.Module;
 import spacegame.model.structure.ModuleSocket;
 import spacegame.model.structure.ShipFrame;
-import spacegame.model.structure.Structure;
-import spacegame.util.StringUtils;
 
-import com.jme3.asset.AssetKey;
 import com.jme3.asset.AssetManager;
-import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
-import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.export.JmeExporter;
-import com.jme3.export.JmeImporter;
-import com.jme3.math.Matrix3f;
-import com.jme3.math.Vector3f;
-import com.jme3.renderer.RenderManager;
-import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.control.AbstractControl;
 import com.jme3.scene.control.Control;
 
 public class ShipControl extends StructureControl implements ISpaceShip {

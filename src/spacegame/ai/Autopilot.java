@@ -1,16 +1,14 @@
 package spacegame.ai;
 
-import java.util.LinkedList;
 import java.util.Queue;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.jme3.math.Vector3f;
-
 import spacegame.model.ISpaceShip;
 import spacegame.model.ShipComponent;
+
+import com.jme3.math.Vector3f;
 
 public abstract class Autopilot extends ShipComponent {
 

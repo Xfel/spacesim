@@ -1,14 +1,13 @@
 package spacegame.model.modules;
 
-import com.jme3.asset.AssetManager;
-import com.jme3.math.Vector3f;
-import com.jme3.scene.Spatial;
-
-import spacegame.model.StructureControl;
 import spacegame.model.control.EngineControl;
 import spacegame.model.control.IntegrityControl;
 import spacegame.model.structure.Module;
 import spacegame.model.structure.ModuleType;
+
+import com.jme3.asset.AssetManager;
+import com.jme3.math.Vector3f;
+import com.jme3.scene.Spatial;
 
 public class EngineModule extends Module{
 	
