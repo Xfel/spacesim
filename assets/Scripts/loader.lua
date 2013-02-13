@@ -40,6 +40,9 @@ local function getConfigMethods(configObject, _clsid)
 
 					configObject:addSocket(_id, loadObject)
 				end
+			end,
+			bindsocket = function(_id, _module)
+				configObject:prebindModule(_id, _module)
 			end
 		}
 	end

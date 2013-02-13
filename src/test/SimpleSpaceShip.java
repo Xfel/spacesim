@@ -1,5 +1,6 @@
 package test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,12 +16,17 @@ import com.jme3.effect.Particle;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.effect.ParticleMesh;
 import com.jme3.effect.influencers.DefaultParticleInfluencer;
+import com.jme3.export.JmeExporter;
+import com.jme3.export.JmeImporter;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.RenderManager;
+import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.control.Control;
 
 import spacegame.model.EngineGroup;
 import spacegame.model.IShipEngine;
@@ -269,5 +275,41 @@ public class SimpleSpaceShip extends SimpleSpaceObject implements ISpaceShip {
 
 	protected void addEngineGroup(EngineGroup group) {
 		engineGroups.put(group.getId(), group);
+	}
+
+	@Override
+	public Control cloneForSpatial(Spatial spatial) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setSpatial(Spatial spatial) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void update(float tpf) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void render(RenderManager rm, ViewPort vp) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void write(JmeExporter ex) throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void read(JmeImporter im) throws IOException {
+		// TODO Auto-generated method stub
+		
 	}
 }
