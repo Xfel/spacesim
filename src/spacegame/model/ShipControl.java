@@ -1,5 +1,7 @@
 package spacegame.model;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,29 +80,51 @@ public class ShipControl extends StructureControl implements ISpaceShip {
 			}
 		}
 	}
+	
+	private List<IShipEngine> engines=new ArrayList<IShipEngine>();
+	
+	private HashMap<String, EngineGroup> engineGroups=new HashMap<String, EngineGroup>();
 
+	public void addEngine(IShipEngine engine, String...groups){
+		engines.add(engine);
+		
+		for (String gid : groups) {
+			getEngineGroup(gid).add(engine);
+		}
+	}
+	
+	public void removeEngine(IShipEngine engine){
+		for(EngineGroup group:engineGroups.values()){
+			group.remove(engine);
+		}
+		engines.remove(engine);
+	}
+	
 	@Override
 	public List<? extends IShipEngine> getEngines() {
-		// TODO Auto-generated method stub
-		return null;
+		return Collections.unmodifiableList(engines);
 	}
 
 	@Override
 	public IShipEngine getEngine(int id) {
-		// TODO Auto-generated method stub
-		return null;
+		return engines.get(id);
 	}
 
 	@Override
 	public void stopAllEngines() {
-		// TODO Auto-generated method stub
-
+		for(IShipEngine engine: engines){
+			engine.setCurrentForce(0);
+		}
 	}
 
 	@Override
 	public EngineGroup getEngineGroup(String id) {
-		// TODO Auto-generated method stub
-		return null;
+		EngineGroup group=engineGroups.get(id);
+		if(group==null){
+			group=new EngineGroup(id);
+			engineGroups.put(id, group);
+		}
+		return group;
 	}
 
 }

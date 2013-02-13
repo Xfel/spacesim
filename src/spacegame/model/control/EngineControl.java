@@ -70,7 +70,13 @@ public class EngineControl extends AbstractControl implements IModuleControl, IS
 
 	@Override
 	public void setShip(ShipControl ship) {
+		if(this.ship!=null){
+			this.ship.removeEngine(this);
+		}
 		this.ship = ship;
+		if(ship!=null){
+			ship.addEngine(this,module.getEngineGroups().toArray(new String[module.getEngineGroups().size()]));
+		}
 	}
 
 	@Override
@@ -141,7 +147,7 @@ public class EngineControl extends AbstractControl implements IModuleControl, IS
 		if (force < 0 || force > 1) {
 			throw new IllegalArgumentException("Force out of supported bounds");
 		}
-		boolean wasNotZero = ((Float) spatial.getUserData(UD_CURRENT_FORCE)) > FastMath.FLT_EPSILON;
+		boolean wasNotZero = getCurrentForce() > FastMath.FLT_EPSILON;
 		spatial.setUserData(UD_CURRENT_FORCE, force);
 		if (effect != null) {
 			if (force > FastMath.FLT_EPSILON && !wasNotZero) {
