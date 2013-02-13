@@ -70,6 +70,7 @@ public class IntegrityControl implements IDamageable {
 		float integrity = getIntegrity();
 
 		integrity -= damage;
+		System.out.println(integrity);
 
 		if (integrity <= 0) {
 			integrity = 0;

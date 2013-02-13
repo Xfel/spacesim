@@ -1,5 +1,6 @@
 package spacegame.model;
 
+
 import spacegame.model.structure.Structure;
 
 import com.jme3.bullet.PhysicsSpace;
@@ -19,11 +20,11 @@ public class StructureControl extends AbstractControl implements PhysicsControl,
 
 	private Structure structure;
 
-	private RigidBodyControl physics;
+	protected RigidBodyControl physics;
 
 	private Vector3f location=new Vector3f();
 
-	private Quaternion rotation=new Quaternion();
+	protected Quaternion rotation=new Quaternion();
 
 	private Vector3f linearVelocity=new Vector3f();
 

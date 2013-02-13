@@ -5,6 +5,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
+import com.jme3.math.FastMath;
 import com.jme3.math.Transform;
 
 public class ModuleSocket {
@@ -33,10 +34,15 @@ public class ModuleSocket {
 		transform.setTranslation(x, y, z);
 	}
 
+	public void setRotation(float xRot, float yRot, float zRot) {
+		transform.getRotation().fromAngles(xRot * FastMath.DEG_TO_RAD, yRot * FastMath.DEG_TO_RAD,
+				zRot * FastMath.DEG_TO_RAD);
+	}
+
 	public String getId() {
 		return id;
 	}
-	
+
 	void setId(String id) {
 		this.id = id;
 	}

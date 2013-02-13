@@ -32,7 +32,7 @@ public class SimpleSpaceObject implements ISpacePhysicsObject, PhysicsTickListen
 //		physics.setFriction(0);
 		physics.setAngularSleepingThreshold(0);
 		node.addControl(physics);
-		physics.setUserObject(this);
+//		physics.setUserObject(this);
 	}
 
 	public void attach(PhysicsSpace space){

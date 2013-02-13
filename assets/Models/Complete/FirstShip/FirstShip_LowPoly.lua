@@ -13,11 +13,15 @@ integrity=2000
 socket "maindrive.left" {
 	types = {"engine"},
 	x = -3.6569, y = 0, z = -2.2305,
+	
+	xRot=0, yRot=0, zRot=-90,
 }
 
 socket "maindrive.right" {
 	types = {"engine"},
 	x = -3.6569, y = 0, z = 2.2305,
+	
+	xRot=0, yRot=0, zRot=-   90,
 }
 
 -- define main drive

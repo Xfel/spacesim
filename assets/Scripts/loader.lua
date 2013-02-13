@@ -38,6 +38,11 @@ local function getConfigMethods(configObject, _clsid)
 						loadObject:setLocation(_data.x or 0, _data.y or 0, _data.z or 0)
 					end
 
+
+					if _data.xRot or _data.yRot or _data.zRot then
+						loadObject:setRotation(_data.xRot or 0, _data.yRot or 0, _data.zRot or 0)
+					end
+
 					configObject:addSocket(_id, loadObject)
 				end
 			end,
@@ -55,7 +60,7 @@ local hiddenGlobals= {
 	loadfile=true,
 	dofile=true,
 	config=true,
-	loadConfig=true 
+	loadConfig=true
 }
 
 -- load a lua config file...

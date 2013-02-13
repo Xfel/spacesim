@@ -11,6 +11,7 @@ import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 
 /**
@@ -69,11 +70,22 @@ public class ExtendedPhysicsAppState extends BulletAppState implements PhysicsCo
 
 	@Override
 	public void collision(PhysicsCollisionEvent event) {
-		System.out.println(event.getAppliedImpulse());
-		if (event.getNodeA().getControl(IDamageable.class) != null) {
-			
-			event.getNodeA().getControl(IDamageable.class).damage(event.getAppliedImpulse(), DamageType.Kinetic);
-			
+		float damage = event.getAppliedImpulse();
+		if (damage <= FastMath.ZERO_TOLERANCE) {
+			return;
+		}
+
+//		System.out.println(damage);
+		if (event.getNodeA() != null && event.getNodeA().getControl(IDamageable.class) != null) {
+
+			event.getNodeA().getControl(IDamageable.class).damage(damage, DamageType.Kinetic);
+
+		}
+
+		if (event.getNodeB() != null && event.getNodeB().getControl(IDamageable.class) != null) {
+
+			event.getNodeB().getControl(IDamageable.class).damage(damage, DamageType.Kinetic);
+
 		}
 	}
 

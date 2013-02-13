@@ -11,6 +11,7 @@ import spacegame.model.structure.ModuleSocket;
 import spacegame.model.structure.ShipFrame;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
@@ -125,6 +126,11 @@ public class ShipControl extends StructureControl implements ISpaceShip {
 			engineGroups.put(id, group);
 		}
 		return group;
+	}
+
+	public void applyLocalForce(Vector3f force, Vector3f location) {
+		physics.applyForce(rotation.multLocal(force), rotation.mult(location));
+	
 	}
 
 }

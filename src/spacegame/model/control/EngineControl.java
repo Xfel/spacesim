@@ -9,14 +9,17 @@ import spacegame.model.modules.EngineModule;
 import spacegame.model.structure.Module;
 
 import com.jme3.effect.ParticleEmitter;
+import com.jme3.material.Material;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
+import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
 import com.jme3.scene.control.Control;
+import com.jme3.scene.debug.Arrow;
 
 public class EngineControl extends AbstractControl implements IModuleControl, IShipEngine {
 
@@ -70,24 +73,36 @@ public class EngineControl extends AbstractControl implements IModuleControl, IS
 
 	@Override
 	public void setShip(ShipControl ship) {
-		if(this.ship!=null){
+		if (this.ship != null) {
 			this.ship.removeEngine(this);
 		}
 		this.ship = ship;
-		if(ship!=null){
-			ship.addEngine(this,module.getEngineGroups().toArray(new String[module.getEngineGroups().size()]));
+		if (ship != null) {
+			ship.addEngine(this, module.getEngineGroups().toArray(new String[module.getEngineGroups().size()]));
 		}
 	}
 
 	@Override
 	protected void controlUpdate(float tpf) {
-		ship.getPhysics().applyForce(getActualDirection().mult(getCurrentForce() * getMaximumForce()), getLocation());
+		ship.applyLocalForce(getActualDirection().mult(getCurrentForce() * getMaximumForce()), getLocation());
+//		ship.getPhysics().applyForce(
+//				spatial.getParent().getWorldRotation()
+//						.mult(getActualDirection().mult(getCurrentForce() * getMaximumForce())), getLocation());
 	}
 
 	@Override
 	protected void controlRender(RenderManager rm, ViewPort vp) {
-		// TODO Auto-generated method stub
+		Geometry arrow = new Geometry("arrow", new Arrow(spatial.getParent().getWorldRotation()
+				.mult(getActualDirection().mult(
+				-getCurrentForce() * getMaximumForce() * 0.25f))));
+		arrow.setMaterial(ship.getPhysicsSpace().getDebugManager().loadMaterial("Common/Materials/RedColor.j3m"));
 
+		arrow.setLocalTranslation(spatial.getWorldTransform().transformVector(module.getEmitterLocation(),
+				new Vector3f()));
+//		arrow.setLocalRotation(this.spatial.getParent().getWorldRotation());
+		arrow.updateLogicalState(0.0F);
+		arrow.updateGeometricState();
+		rm.renderScene(arrow, vp);
 	}
 
 	@Override
