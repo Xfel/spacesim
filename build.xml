@@ -29,7 +29,7 @@
           target: clean                      
          ================================= -->
 	<target name="clean">
-		<delete file="${build.dir}" />
+		<delete dir="${build.dir}" />
 
 		<mkdir dir="${build.dir}" />
 		<mkdir dir="${build.classes.dir}" />
@@ -47,8 +47,23 @@
 
 		<!-- compile the assets -->
 		<copy todir="${build.assets.dir}">
-			<fileset dir="${assets.dir}" includes="**/*.j3o, **/*.j3m, **/*.j3md, **/*.png, **/*.dds, **/*.jpg, **/*.blend" />
+			<fileset dir="${assets.dir}" includes="**/*.j3o, **/*.j3m, **/*.j3md, **/*.png, **/*.dds, **/*.jpg, **/*.blend, **/*.lua" />
 		</copy>
+		
+		<!--
+<mapper id="lua_compile" type="glob"
+		           from="${assets.dir}${file.separator}**${file.separator}*.lua"
+		           to="${build.assets.dir}${file.separator}**${file.separator}*.lua"/>
+		<apply  executable="luac" dest="${build.assets.dir}" verbose="true">
+			<fileset dir="${assets.dir}" includes="**/*.lua" />
+			
+			<arg value="-o"/>
+			<targetfile/>
+			<srcfile/>
+			
+			<mapper refid="lua_compile" />
+		</apply>
+-->
 	</target>
 
 	<!-- ================================= 

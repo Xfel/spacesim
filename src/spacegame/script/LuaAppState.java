@@ -15,11 +15,43 @@ import com.jme3.app.state.AppStateManager;
 import com.jme3.asset.AssetInfo;
 import com.jme3.asset.AssetKey;
 import com.jme3.asset.AssetManager;
+import com.jme3.system.JmeSystem;
+import com.jme3.system.Natives;
 import com.naef.jnlua.LuaState;
 import com.naef.jnlua.NamedJavaFunction;
+import com.naef.jnlua.NativeSupport;
 
 public class LuaAppState extends AbstractAppState {
 
+	
+	private static class NativeLibraryLoader implements NativeSupport.Loader{
+
+		@Override
+		public void load() {
+			try {
+				switch(JmeSystem.getPlatform()){
+				case Windows64:
+					Natives.extractNativeLib("windows", "lua52_64", true, true);
+					Natives.extractNativeLib("windows", "jnlua52_64", true, true);
+					break;
+				case Windows32:
+					Natives.extractNativeLib("windows", "lua52", true, true);
+					Natives.extractNativeLib("windows", "jnlua52", true, true);
+					break;
+				default:
+					// assume we will find them somehow...
+					System.loadLibrary("lua52");
+					System.loadLibrary("jnlua52");
+					break;
+				}
+			} catch (IOException e) {
+				log.log(Level.SEVERE, "Error loading lua libraries", e);
+			}
+			
+		}
+		
+	}
+	
 	private static final Logger log = Logger.getLogger(LuaAppState.class.getName());
 
 	private static class LoadTextFile implements NamedJavaFunction {
@@ -75,6 +107,11 @@ public class LuaAppState extends AbstractAppState {
 
 	}
 
+	
+	static{
+		NativeSupport.getInstance().setLoader(new NativeLibraryLoader());
+	}
+	
 	private static LuaAppState instance;
 
 	public static LuaAppState getInstance() {
