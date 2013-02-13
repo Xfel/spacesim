@@ -6,7 +6,7 @@
 loadfile = function( _sFile, mode, env )
 	local success, data = loadTextFile(_sFile)
 	if success then
-		local func, err = load( data, _sFile, mode, env )
+		local func, err = load( data, _sFile, mode or "bt", env or _ENV )
 		return func, err
 	end
 	return nil, data
@@ -32,3 +32,9 @@ end
 function string.ends(String,End)
    return End=='' or string.sub(String,-string.len(End))==End
 end
+
+
+-- load libraries
+
+dofile("Scripts/vector.lua")
+dofile("Scripts/quaternion.lua")

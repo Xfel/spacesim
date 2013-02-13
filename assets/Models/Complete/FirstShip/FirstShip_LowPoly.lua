@@ -21,7 +21,7 @@ socket "maindrive.right" {
 	types = {"engine"},
 	x = -3.6569, y = 0, z = 2.2305,
 	
-	xRot=0, yRot=0, zRot=-   90,
+	xRot=0, yRot=0, zRot=-90,
 }
 
 -- define main drive

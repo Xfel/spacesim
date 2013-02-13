@@ -34,7 +34,12 @@ local function getConfigMethods(configObject, _clsid)
 						loadObject:setAllowedTypes(_data.types)
 					end
 
-					if _data.x or _data.y or _data.z then
+					if _data.location then
+						if type(_data.location) ~= "table" then
+							error("location must be a vector", 2)
+						end
+						loadObject.transform:setLocation(_data.location)
+					elseif _data.x or _data.y or _data.z then
 						loadObject:setLocation(_data.x or 0, _data.y or 0, _data.z or 0)
 					end
 

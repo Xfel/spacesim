@@ -1,5 +1,6 @@
 package spacegame.script;
 
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.naef.jnlua.Converter;
 import com.naef.jnlua.DefaultConverter;
@@ -32,6 +33,25 @@ public class JmeObjectConverter implements Converter{
 			luaState.pop(1);
 
 			return (T) new Vector3f(x, y, z);
+		}else if(formalType.isAssignableFrom(Quaternion.class) && luaState.type(index)==LuaType.TABLE){
+			
+			luaState.getField(index, "x");
+			float x=(float) luaState.toNumber(-1);
+			luaState.pop(1);
+
+			luaState.getField(index, "y");
+			float y=(float) luaState.toNumber(-1);
+			luaState.pop(1);
+
+			luaState.getField(index, "z");
+			float z=(float) luaState.toNumber(-1);
+			luaState.pop(1);
+
+			luaState.getField(index, "w");
+			float w=(float) luaState.toNumber(-1);
+			luaState.pop(1);
+
+			return (T) new Quaternion(x, y, z, w);
 		}
 		return DefaultConverter.getInstance().convertLuaValue(luaState, index, formalType);
 	}
@@ -39,13 +59,13 @@ public class JmeObjectConverter implements Converter{
 	@Override
 	public void convertJavaObject(LuaState luaState, Object object) {
 		if(object instanceof Vector3f){
-//			// call vector3:new(object)
-//			luaState.getGlobal("vector3");
-//			luaState.getField(-1, "new");
-//			luaState.insert(-2); // or luaState.remove(-2) wenn new keine methode
-//			
-//			luaState.pushJavaObjectRaw(object);
-//			luaState.call(2, 1);
+			// call vector3:new(object)
+			luaState.getGlobal("vector3");
+			luaState.getField(-1, "new");
+			luaState.insert(-2); // or luaState.remove(-2) wenn new keine methode
+			
+			luaState.pushJavaObjectRaw(object);
+			luaState.call(2, 1);
 			
 			
 			return;
