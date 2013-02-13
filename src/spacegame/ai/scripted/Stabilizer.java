@@ -1,17 +1,14 @@
 package spacegame.ai.scripted;
 
+import spacegame.ai.Autopilot;
+import spacegame.model.EngineGroup;
+
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
-import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.Control;
-
-import spacegame.ai.Autopilot;
-import spacegame.model.EngineGroup;
-import spacegame.model.IShipEngine;
-import spacegame.model.ISpaceShip;
 
 public class Stabilizer extends Autopilot {
 

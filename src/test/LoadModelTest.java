@@ -3,11 +3,11 @@ package test;
 import java.io.File;
 import java.io.IOException;
 
+import spacegame.model.structure.ShipFrame;
+
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.export.xml.XMLExporter;
 import com.jme3.math.Vector3f;
-
-import spacegame.model.structure.ShipFrame;
 
 public class LoadModelTest {
 	public static void main(String[] args) throws IOException {

@@ -1,6 +1,5 @@
 package spacegame.model;
 
-import java.util.List;
 
 /**
  * A generic sensor interface.

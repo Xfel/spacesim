@@ -11,16 +11,12 @@ import spacegame.model.modules.EngineModule;
 import spacegame.model.modules.PowerplantModule;
 import spacegame.model.structure.ShipFrame;
 
-import com.jme3.app.SettingsDialog;
 import com.jme3.asset.AssetInfo;
 import com.jme3.asset.AssetLoadException;
 import com.jme3.asset.AssetLoader;
-import com.naef.jnlua.JavaFunction;
 import com.naef.jnlua.LuaException;
 import com.naef.jnlua.LuaRuntimeException;
 import com.naef.jnlua.LuaState;
-import com.naef.jnlua.LuaType;
-import com.naef.jnlua.LuaValueProxy;
 import com.naef.jnlua.NamedJavaFunction;
 
 public class LuaLoader implements AssetLoader {

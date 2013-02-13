@@ -8,10 +8,7 @@ import spacegame.model.ShipControl;
 import spacegame.model.modules.EngineModule;
 import spacegame.model.structure.Module;
 
-import com.jme3.effect.Particle;
 import com.jme3.effect.ParticleEmitter;
-import com.jme3.effect.influencers.ParticleInfluencer;
-import com.jme3.effect.shapes.EmitterShape;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;

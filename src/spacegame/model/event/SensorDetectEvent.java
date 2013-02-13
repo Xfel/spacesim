@@ -1,8 +1,8 @@
 package spacegame.model.event;
 
-import com.jme3.math.Vector3f;
-
 import spacegame.model.ISensor;
+
+import com.jme3.math.Vector3f;
 
 public class SensorDetectEvent extends ModelEvent {
 

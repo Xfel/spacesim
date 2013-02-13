@@ -1,11 +1,9 @@
 package spacegame.model.structure;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import spacegame.model.ShipControl;
-import spacegame.model.StructureControl;
 import spacegame.model.control.IntegrityControl;
 
 import com.jme3.asset.AssetKey;

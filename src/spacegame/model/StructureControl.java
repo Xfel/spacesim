@@ -1,17 +1,9 @@
 package spacegame.model;
 
-import java.security.AllPermission;
-
-import org.bushe.swing.event.EventBus;
-
-import spacegame.model.event.DamageableEvent;
 import spacegame.model.structure.Structure;
 
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.PhysicsTickListener;
-import com.jme3.bullet.collision.PhysicsCollisionEvent;
-import com.jme3.bullet.collision.PhysicsCollisionListener;
-import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.PhysicsControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.Quaternion;

@@ -6,7 +6,6 @@ package spacegame.ai.nn;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map.Entry;
 
 import spacegame.ai.Autopilot;

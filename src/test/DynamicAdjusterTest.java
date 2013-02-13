@@ -1,10 +1,8 @@
 package test;
 
-import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
 import spacegame.ai.scripted.DynamicAdjuster;
-import spacegame.ai.scripted.Stabilizer;
 
 import com.jme3.math.FastMath;
 

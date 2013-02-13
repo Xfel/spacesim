@@ -1,8 +1,8 @@
 package spacegame.model;
 
-import com.jme3.scene.control.Control;
-
 import spacegame.model.structure.Module;
+
+import com.jme3.scene.control.Control;
 
 public interface IModuleControl extends Control{
 	
