@@ -8,6 +8,7 @@ import spacegame.model.ShipControl;
 import spacegame.model.modules.EngineModule;
 import spacegame.model.structure.Module;
 
+import com.jme3.asset.AssetManager;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.material.Material;
 import com.jme3.math.FastMath;
@@ -29,6 +30,7 @@ public class EngineControl extends AbstractControl implements IModuleControl, IS
 	private EngineModule module;
 	private ShipControl ship;
 	private ParticleEmitter effect;
+	private Geometry debugShape;
 
 	public EngineControl(EngineModule module) {
 		this.module = module;
@@ -92,17 +94,25 @@ public class EngineControl extends AbstractControl implements IModuleControl, IS
 
 	@Override
 	protected void controlRender(RenderManager rm, ViewPort vp) {
-		Geometry arrow = new Geometry("arrow", new Arrow(spatial.getParent().getWorldRotation()
-				.mult(getActualDirection().mult(
-				-getCurrentForce() * getMaximumForce() * 0.25f))));
-		arrow.setMaterial(ship.getPhysicsSpace().getDebugManager().loadMaterial("Common/Materials/RedColor.j3m"));
+		if (ship != null && ship.getPhysicsSpace() != null && ship.getPhysicsSpace().getDebugManager() != null) {
+			Geometry arrow = createDebugShape(ship.getPhysicsSpace().getDebugManager());
 
-		arrow.setLocalTranslation(spatial.getWorldTransform().transformVector(module.getEmitterLocation(),
-				new Vector3f()));
+			arrow.setLocalTranslation(spatial.getWorldTransform().transformVector(module.getEmitterLocation(),
+					new Vector3f()));
 //		arrow.setLocalRotation(this.spatial.getParent().getWorldRotation());
-		arrow.updateLogicalState(0.0F);
-		arrow.updateGeometricState();
-		rm.renderScene(arrow, vp);
+			arrow.updateLogicalState(0.0F);
+			arrow.updateGeometricState();
+			rm.renderScene(arrow, vp);
+		}
+	}
+
+	private Geometry createDebugShape(AssetManager assets) {
+		if (debugShape == null) {
+			debugShape = new Geometry("arrow", new Arrow(spatial.getParent().getWorldRotation()
+					.mult(getActualDirection().mult(-getCurrentForce() * getMaximumForce() * 0.25f))));
+			debugShape.setMaterial(assets.loadMaterial("Common/Materials/RedColor.j3m"));
+		}
+		return debugShape;
 	}
 
 	@Override
