@@ -1,9 +1,12 @@
 package spacegame.script;
 
+import java.lang.reflect.Method;
+
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.naef.jnlua.Converter;
 import com.naef.jnlua.DefaultConverter;
+import com.naef.jnlua.JavaFunction;
 import com.naef.jnlua.LuaState;
 import com.naef.jnlua.LuaType;
 
@@ -18,6 +21,17 @@ public class JmeObjectConverter implements Converter{
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T convertLuaValue(LuaState luaState, int index, Class<T> formalType) {
+//		if(formalType.isInterface() && luaState.type(index)==LuaType.FUNCTION && formalType.getDeclaredMethods().length==1){
+//			if(formalType==JavaFunction.class){
+//				if(luaState.isJavaFunction(index)){
+//					return (T) luaState.toJavaFunction(index);
+//				}
+//			}else{
+//				Method method= formalType.getDeclaredMethods()[0];
+//			luaState.getProxy(index, interfaze)
+//			}
+//		}
+		
 		if(formalType.isAssignableFrom(Vector3f.class) && luaState.type(index)==LuaType.TABLE){
 			
 			luaState.getField(index, "x");

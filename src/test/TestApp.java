@@ -81,7 +81,7 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 		physicsState = new ExtendedPhysicsAppState();
 		physicsState.setThreadingType(ThreadingType.PARALLEL);
 		stateManager.attach(physicsState);
-		 physicsState.getPhysicsSpace().enableDebug(assetManager);
+//		 physicsState.getPhysicsSpace().enableDebug(assetManager);
 		physicsState.getPhysicsSpace().setGravity(new Vector3f(0, 0, 0));
 		physicsState.getPhysicsSpace().addTickListener(this);
 
@@ -91,9 +91,7 @@ public class TestApp extends SimpleApplication implements PhysicsTickListener, A
 		// we have to call that now, unfortunately
 		luaAppState.initialize(stateManager, this);
 		
-		
-
-//		viewPort.setClearFlags(false, false, false);
+		viewPort.setClearFlags(false, true, false);
 
 		flyCam = new NumpadFlyByCamera(cam);
 		flyCam.setEnabled(true);

@@ -22,7 +22,7 @@
 
 	<path id="classpath">
 		<fileset dir="${jmonkeyengine.dir}" includes="*.jar" />
-		<fileset dir="${jnlua.dir}" includes="jnlua-1.0.3.jar" />
+		<fileset dir="${jnlua.dir}" includes="*.jar" />
 	</path>
 
 	<!-- ================================= 
@@ -49,7 +49,7 @@
 		<copy todir="${build.assets.dir}">
 			<fileset dir="${assets.dir}" includes="**/*.j3o, **/*.j3m, **/*.j3md, **/*.png, **/*.dds, **/*.jpg, **/*.blend, **/*.lua" />
 		</copy>
-		
+
 		<!--
 <mapper id="lua_compile" type="glob"
 		           from="${assets.dir}${file.separator}**${file.separator}*.lua"
@@ -95,10 +95,10 @@
 		</copy>
 
 		<!-- Create launch4j exe -->
-		
+
 		<ant antfile="${basedir}/launch4j.xml" dir="${launch4j.dir}">
-			<property name="basedir" location="${launch4j.dir}"/>
-			<property name="user.dir" location="${launch4j.dir}"/>
+			<property name="basedir" location="${launch4j.dir}" />
+			<property name="user.dir" location="${launch4j.dir}" />
 
 		</ant>
 	</target>

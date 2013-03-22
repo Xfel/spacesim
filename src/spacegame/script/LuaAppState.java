@@ -26,7 +26,7 @@ public class LuaAppState extends AbstractAppState {
 		public void load() {
 			try {
 				switch(JmeSystem.getPlatform()){
-				//TODO create natives jar for packaging
+				// TODO create and pack native libraries
 //				case Windows64:
 //					Natives.extractNativeLib("windows", "lua52_64", true, true);
 //					Natives.extractNativeLib("windows", "jnlua52_64", true, true);
@@ -35,6 +35,23 @@ public class LuaAppState extends AbstractAppState {
 //					Natives.extractNativeLib("windows", "lua52", true, true);
 //					Natives.extractNativeLib("windows", "jnlua52", true, true);
 //					break;
+//				case Linux64:
+//					Natives.extractNativeLib("linux", "lua52_64", true, true);
+//					Natives.extractNativeLib("linux", "jnlua52_64", true, true);
+//					break;
+//				case Linux32:
+//					Natives.extractNativeLib("linux", "lua52", true, true);
+//					Natives.extractNativeLib("linux", "jnlua52", true, true);
+//					break;
+//					
+//				case MacOSX32:
+//				case MacOSX64:
+//				case MacOSX_PPC32:
+//				case MacOSX_PPC64:
+//						Natives.extractNativeLib("macosx", "liblua52.dylib", true, true);
+//					Natives.extractNativeLib("macosx", "jnlua52", true, true);
+//					break;
+				
 				default:
 					// assume we will find them somehow...
 					System.loadLibrary("lua52");
@@ -69,7 +86,7 @@ public class LuaAppState extends AbstractAppState {
 			AssetInfo inf = assetManager.locateAsset(new AssetKey<Object>(name));
 
 			if (inf == null) {
-				luaState.pushBoolean(false);
+				luaState.pushNil();
 				luaState.pushString("File not found");
 				return 2;
 			}
@@ -92,8 +109,9 @@ public class LuaAppState extends AbstractAppState {
 //					log.log(Level.WARNING, "Error closing stream", e);
 //				}
 //			}
-			luaState.pushBoolean(true);
+//			luaState.pushBoolean(true);
 			luaState.pushJavaFunction(new LuaInputStream(is));
+			luaState.pushString(extractFileName(name));
 			return 2;
 		}
 

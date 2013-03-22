@@ -1,6 +1,0 @@
-<?xml  version='1.0' encoding='UTF-8'?>
-<spacegame.model.structure.ShipFrame format_version='2' integrity='4000.0' mass='20.0' model='/Models/Complete/FirstShip/FirstShip_LowPoly.blend' name='FirstShip' savable_versions='0, 0'>
-    <outline class='com.jme3.bullet.collision.shapes.BoxCollisionShape' savable_versions='0, 0'>
-        <halfExtents class='com.jme3.math.Vector3f' savable_versions='0' x='1.0' y='2.0' z='1.0'/>
-    </outline>
-</spacegame.model.structure.ShipFrame>

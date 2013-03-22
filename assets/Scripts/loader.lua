@@ -12,10 +12,18 @@ function config.import(name)
 	return config
 end
 
--- init clas specific config methods
+-- init class specific config methods
 
 local function getConfigMethods(configObject, _clsid)
 
+-- try to find custom script
+	local func = loadfile("Scripts/Loader/" .. _clsid .. ".lua")
+
+	if func then
+		return func(configObject)
+	end
+
+--[[=
 	if string.ends(_clsid, "ShipFrame") then
 		return {
 			socket=function(_id)
@@ -54,9 +62,10 @@ local function getConfigMethods(configObject, _clsid)
 			bindsocket = function(_id, _module)
 				configObject:prebindModule(_id, _module)
 			end
-		}
+		}, {}
 	end
-
+]]
+	error("Unknown asset class: ".._clsid, 3)
 end
 
 -- configure hidden global methods
@@ -70,13 +79,13 @@ local hiddenGlobals= {
 
 -- load a lua config file...
 function loadConfig(code, name)
-	local configObject, configMethods
+	local configObject, configMethods, configEvents
 
 	local function class(_clsid)
 		configObject = config.newInstance(_clsid);
 
 		--configObject.location = name
-		configMethods = getConfigMethods(configObject, _clsid)
+		configMethods, configEvents = getConfigMethods(configObject, _clsid)
 	end
 
 	local configEnv={}
@@ -110,7 +119,7 @@ function loadConfig(code, name)
 		end
 
 		if type(_value) == "function" then
-		-- TODO handle event
+			configEvents[_key](_value)
 		else
 			configObject[_key] = _value
 		end

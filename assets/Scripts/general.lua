@@ -4,12 +4,12 @@
 -- replace loadfile and dofile
 
 loadfile = function( _sFile, mode, env )
-	local success, data = loadTextFile(_sFile)
-	if success then
-		local func, err = load( data, _sFile, mode or "bt", env or _ENV )
+	local data, name = loadTextFile(_sFile)
+	if data then
+		local func, err = load( data, name, mode or "bt", env or _ENV )
 		return func, err
 	end
-	return nil, data
+	return nil, name
 end
 
 dofile = function( _sFile )

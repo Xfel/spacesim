@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import spacegame.model.IShipEngine;
 import spacegame.model.control.EngineControl;
 import spacegame.model.control.IntegrityControl;
 import spacegame.model.structure.Module;
@@ -16,6 +17,10 @@ import com.jme3.scene.Spatial;
 
 public class EngineModule extends Module {
 
+	public static interface EnergyCostComputer{
+		float compute(IShipEngine engine, float desiredDriveForce);
+	}
+	
 	private float maximumDriveForce;
 
 	private Vector3f emitterLocation = new Vector3f();
@@ -25,8 +30,13 @@ public class EngineModule extends Module {
 	private float defaultEnergyPerNewton;
 
 	private float particlespeedPerNewton;
+	
+	private EnergyCostComputer energyCostComputer;
 
-	public float computeEnergyCost(float desiredDriveForce) {
+	public float computeEnergyCost(IShipEngine engine, float desiredDriveForce) {
+		if(energyCostComputer!=null){
+			return energyCostComputer.compute(engine, desiredDriveForce);
+		}
 		return desiredDriveForce * defaultEnergyPerNewton;
 	}
 
@@ -130,5 +140,13 @@ public class EngineModule extends Module {
 	@Override
 	public ModuleType getType() {
 		return ModuleType.ENGINE;
+	}
+
+	public EnergyCostComputer getEnergyCostComputer() {
+		return energyCostComputer;
+	}
+
+	public void setEnergyCostComputer(EnergyCostComputer energyCostComputer) {
+		this.energyCostComputer = energyCostComputer;
 	}
 }
