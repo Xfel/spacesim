@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="dist" name="SpaceGame">
 
-	<property name="app.name" value="SpaceGame" />
-	<property name="app.main.class" value="test.TestApp" />
-
-
+	<!-- Please don't edit the build.xml file to change local properties. Define these in the build.properties instead. -->
+	<property file="build.properties" />
+	
 	<!-- Source locations -->
 	<property name="src.dir" location="src" />
 	<property name="assets.dir" location="assets" />
@@ -14,11 +13,6 @@
 	<property name="build.classes.dir" location="${build.dir}/classes" />
 	<property name="build.assets.dir" location="${build.dir}/assets" />
 	<property name="dist.dir" location="${build.dir}/dist" />
-
-	<!-- Environment settings -->
-	<property name="launch4j.dir" location="D:\Software-Bibliothek\java\launch4j" />
-	<property name="jmonkeyengine.dir" location="C:/Program Files/jmonkeyplatform/jmonkeyplatform/libs" />
-	<property name="jnlua.dir" location="D:\Software-Bibliothek\java\jnlua" />
 
 	<path id="classpath">
 		<fileset dir="${jmonkeyengine.dir}" includes="*.jar" />
